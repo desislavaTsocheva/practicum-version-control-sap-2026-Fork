@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Yourself</title>
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap}" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/stylesheet.css}" href="/static/css/stylesheet.css" rel="stylesheet"/>
+</head>
+<body>
+
+<section class="hero">
+    <h1 class="display-1">Manage Yourself</h1>
+    <p class="lead">Clean. Organized. Powerful.</p>
+    <div class="scroll-hint">&darr;</div>
+</section>
+<section>
+    <a th:href="@{/login}" class="btn-start">START NOW</a>
+</section>
+
+
+<script>
+    document.addEventListener('wheel', function(e) {
+        if (e.deltaY > 0) {
+            window.scrollBy(0, window.innerHeight);
+        } else {
+            window.scrollBy(0, -window.innerHeight);
+        }
+    }, { passive: true });
+</script>
+
+</body>
+</html>
