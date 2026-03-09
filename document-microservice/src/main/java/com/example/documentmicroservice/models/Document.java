@@ -22,10 +22,10 @@ public class Document {
     @Column(name = "name", nullable =false, length = 50)
     private String name;
 
-    @Column(name = "description", nullable =false, length = 500)
+    @Column(name = "description", length = 500)
     private String description;
 
-    @Column(name = "created_at", nullable =false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt=LocalDateTime.now();
 
     @Column(name = "project_id", nullable = false)
