@@ -3,21 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Yourself</title>
-    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap}" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <link th:href="@{/css/stylesheet.css}" href="/static/css/stylesheet.css" rel="stylesheet"/>
+    <title>Manage Yourself | Focus & Control</title>
+    <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap}"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/stylesheet.css}" href="/static/css/stylesheet.css">
 </head>
 <body>
 
 <section class="hero">
-    <h1 class="display-1">Manage Yourself</h1>
-    <p class="lead">Clean. Organized. Powerful.</p>
-    <div class="scroll-hint">&darr;</div>
-</section>
-<section>
-    <a th:href="@{/login}" class="btn-start">START NOW</a>
+    <div class="hero-content">
+        <h1 class="fade-in">Manage Yourself</h1>
+        <p class="lead fade-in">Clean. Organized. Powerful.</p>
+<!--        <div class="daily-quote fade-in">"The secret of getting ahead is getting started."</div>-->
+        <br>
+        <a href="#auth-section" class="btn-start fade-in">START NOW</a>
+    </div>
+    <div class="scroll-hint">SCROLL TO EXPLORE &darr;</div>
 </section>
 
+<section id="auth-section" class="split-container">
+    <div class="split-left">
+        <div class="info-box">
+            <span class="badge">MANAGE YOURSELF</span>
+            <h2>Ready to take <br><span class="highlight">full control?</span></h2>
+            <p>Join us to organize your life with a single click. Your journey to peak productivity starts here.
+            Be ready!</p>
+
+            <ul class="features">
+                <li><span class="icon">⤑</span> Upload, edit and read files</li>
+                <li><span class="icon">⤑</span> View your collaborators</li>
+                <li><span class="icon">⤑</span> Control versions</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="split-right">
+        <div class="auth-card">
+            <h3>Welcome Back!</h3>
+            <p class="sub-text">Please enter your details</p>
+
+            <form th:action="@{/login}" method="post">
+                <div class="input-group">
+                    <input type="text" name="username" class="form-control" placeholder="Username" required>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" class="form-control" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn-custom">LOGIN</button>
+            </form>
+
+            <p class="footer-text">
+                New here? <a href="#">Create an account</a>
+            </p>
+        </div>
+    </div>
+</section>
 
 <script>
     document.addEventListener('wheel', function(e) {
