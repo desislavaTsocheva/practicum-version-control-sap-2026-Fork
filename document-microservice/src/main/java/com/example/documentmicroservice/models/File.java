@@ -1,4 +1,5 @@
-package models;
+package com.example.documentmicroservice.models;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,21 +22,23 @@ public class File {
 
     @Lob
     @Column(name = "filepath", nullable =false, length=255)
-    private String file_path;
+    private byte[] file_path;
 
-    @Lob
+
     @Column(name = "content", nullable = false,length = 255)
     private String content;
 
-    @Column(name = "comment" ,nullable=false, length=255)
+    @Column(name = "comment", length=255)
     private String comment;
 
-    @Column(name = "draft", nullable=false, length=255)
-    private String draft;
+    @Lob
+    @Column(name = "draft", columnDefinition = "VARBINARY(MAX)")
+    private byte[] draft;
 
-    @Column(name = "history_timestamp", nullable=false)
+    @Column(name = "history_timestamp")
     private LocalDateTime historyTimestamp;
 
     @Column(name = "version_id", nullable = false)
     private UUID versionId;
+
 }

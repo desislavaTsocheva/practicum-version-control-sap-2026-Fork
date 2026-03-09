@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "projects")
+@Table(name = "projects", schema = "dbo")
 public class Project {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -22,10 +22,10 @@ public class Project {
     @Column(name = "name", nullable=false, length = 50)
     private String name;
 
-    @Column(name = "description", nullable = false, length=255)
+    @Column(name = "description", length=255)
     private String description;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt= LocalDateTime.now();
 
     @Column(name = "owner_id", nullable = false)
