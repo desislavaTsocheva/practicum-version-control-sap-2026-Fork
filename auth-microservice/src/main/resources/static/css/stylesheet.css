@@ -1,0 +1,130 @@
+:root {
+    --bg-main: #98A99A;
+    --card-bg: #E3E9E2;
+    --text-dark: #1A1A1A;
+    --accent-green: #A3C1AD;
+    --hover-light-green: #8FA697;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-snap-type: y mandatory;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-dark);
+    margin: 0;
+    overflow-x: hidden;
+    scrollbar-width: none;
+}
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+section {
+    height: 100vh;
+    width: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Hero Section */
+.hero h1 {
+    font-size: 6rem;
+    font-weight: 700;
+    letter-spacing: -3px;
+    margin-bottom: 10px;
+}
+
+.hero p.lead {
+    font-size: 1.5rem;
+    opacity: 0.8;
+}
+
+.scroll-hint {
+    position: absolute;
+    bottom: 30px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+    40% {transform: translateY(-10px);}
+    60% {transform: translateY(-5px);}
+}
+
+/* Auth Section */
+.auth-card {
+    background-color: var(--card-bg);
+    border-radius: 45px;
+    padding: 60px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+}
+
+.form-control {
+    border-radius: 15px;
+    padding: 14px;
+    border: 1px solid rgba(0,0,0,0.1);
+    background-color: rgba(255,255,255,0.5);
+    margin-bottom: 20px;
+}
+
+.btn-custom {
+    background-color: var(--accent-green);
+    border: none;
+    border-radius: 50px;
+    padding: 15px;
+    font-weight: 700;
+    color: var(--text-dark);
+    width: 100%;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-custom:hover {
+    background-color: #8fa697;
+    transform: scale(1.02);
+}
+
+a {
+    text-decoration: none;
+    color: var(--text-dark);
+}
+
+.btn-start {
+    background-color: var(--accent-green);
+    color: var(--text-dark);
+    border: none;
+    padding: 20px 50px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.btn-start:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    background-color: white;
+    color: black;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
