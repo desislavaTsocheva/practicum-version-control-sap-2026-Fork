@@ -1,4 +1,5 @@
-package models;
+package com.example.documentmicroservice.models;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,17 +23,16 @@ public class Version {
     @Column(name = "version_number", nullable =false, length=255)
     private int versionNumber;
 
-    @Lob
-    @Column(name = "message", nullable = false,length=255)
+    @Column(name = "message",length=255)
     private String message;
 
-    @Column(name = "created_at", nullable =false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt=LocalDateTime.now();
 
-    @Column(name = "is_approved", nullable = false)
+    @Column(name = "is_approved")
     private boolean isApproved;
 
-    @Column(name = "is_active", nullable = false)
+    @Column(name = "is_active")
     private boolean isActive;
 
     @Column(name = "document_id", nullable = false)
