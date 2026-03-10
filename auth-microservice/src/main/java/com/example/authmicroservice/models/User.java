@@ -46,6 +46,9 @@ public class User implements UserDetails {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(name = "profile_picture")
+    private String profilePicture = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.role));
