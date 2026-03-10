@@ -5,6 +5,9 @@ import com.example.authmicroservice.models.User;
 import com.example.authmicroservice.repositories.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +16,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class UserService{
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
@@ -64,5 +67,10 @@ public class UserService{
         user.setPassword(encodedPassword);
 
         userRepository.save(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
     }
 }
