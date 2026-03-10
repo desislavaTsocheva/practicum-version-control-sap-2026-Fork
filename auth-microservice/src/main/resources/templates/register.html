@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+</head>
+<body>
+
+<h2>Регистрация на нов потребител</h2>
+
+<form th:action="@{auth/register}" th:method="post" th:object="${user}">
+
+    <div>
+        <label for="username">Потребителско име:</label><br>
+        <input type="text" id="username" th:field="*{username}" />
+        <p th:if="${#fields.hasErrors('username')}" th:errors="*{username}" style="color: red;"></p>
+    </div>
+
+    <div>
+        <label for="email">Имейл:</label><br>
+        <input type="email" id="email" th:field="*{email}" />
+        <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red;"></p>
+    </div>
+
+    <div>
+        <label for="password">Парола:</label><br>
+        <input type="password" id="password" th:field="*{password}" />
+        <p th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red;"></p>
+    </div>
+
+    <div>
+        <label for="confirmPassword">Потвърди паролата:</label><br>
+        <input type="password" id="confirmPassword" name="confirmPassword" />
+    </div>
+
+    <br>
+    <button type="submit">Регистрирай ме</button>
+</form>
+
+<p>Вече имате профил? <a href="/login">Вход</a></p>
+
+</body>
+</html>

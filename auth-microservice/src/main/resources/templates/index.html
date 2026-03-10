@@ -6,7 +6,7 @@
     <title>Manage Yourself | Focus & Control</title>
     <link th:href="@{https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap}"
             href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/stylesheet.css}" href="/static/css/stylesheet.css">
+    <link rel="stylesheet" th:href="@{css/stylesheet.css}" href="/static/css/stylesheet.css">
 </head>
 <body>
 
@@ -16,7 +16,7 @@
         <p class="lead fade-in">Clean. Organized. Powerful.</p>
 <!--        <div class="daily-quote fade-in">"The secret of getting ahead is getting started."</div>-->
         <br>
-        <a href="#auth-section" class="btn-start fade-in">START NOW</a>
+        <a th:href="@{auth/register}" class="btn-start fade-in">START NOW</a>
     </div>
     <div class="scroll-hint">SCROLL TO EXPLORE &darr;</div>
 </section>
@@ -42,7 +42,7 @@
             <h3>Welcome Back!</h3>
             <p class="sub-text">Please enter your details</p>
 
-            <form th:action="@{/login}" method="post">
+            <form th:action="@{auth/login}" method="post">
                 <div class="input-group">
                     <input type="text" name="username" class="form-control" placeholder="Username" required>
                 </div>
@@ -53,7 +53,7 @@
             </form>
 
             <p class="footer-text">
-                New here? <a href="#">Create an account</a>
+                New here? <a th:href="@{auth/register}">Create an account</a>
             </p>
         </div>
     </div>
