@@ -110,6 +110,14 @@ section {
     flex-wrap: wrap;
 }
 
+.error-message {
+    color: #ff4d4d;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    display: block;
+    text-align: left;
+}
+
 .split-left {
     flex: 1;
     display: flex;

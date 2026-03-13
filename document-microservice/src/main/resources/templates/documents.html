@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Yourself | Workspace</title>
+    <link rel="stylesheet" th:href="@{/document-microservice/css/stylesheet.css}" href="../static/css/stylesheet.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="workspace-container">
+
+    <div class="column-card">
+        <div class="card-header">
+            <div class="profile-section">
+                <img th:src="@{/document-microservice/images/profile.jpg}" alt="profile" class="profile-pic" onerror="this.style.display='none'">
+                <span class="profile-name" th:text="${username}">Mariya Georgieva</span>
+            </div>
+        </div>
+
+        <div class="file-tree">
+            <div th:each="entry, iterStat : ${groupedDocs}">
+                <div class="tree-item folder-toggle" onclick="toggleFolder(this)">
+                    <img th:src="@{/document-microservice/images/icon-folder.png}" alt="folder">
+                    <span class="profile-name">
+                        <span th:text="${'Project ' + (iterStat.index + 1)}">Project 1</span>
+                        <span class="file-count" th:text="${'(' + entry.value.size() + ')'}">(0)</span>
+                    </span>
+                </div>
+
+                <ul class="nested-docs">
+                    <li th:each="doc : ${entry.value}">
+                        <div class="tree-item file-clickable"
+                             style="cursor: pointer;"
+                             th:data-name="${doc.name}"
+                             th:data-description="${doc.description}"
+                             th:data-date="${#temporals.format(doc.createdAt, 'dd.MM.yyyy')}"
+                             onclick="handleFileClick(this)">
+
+                            <img th:src="@{/document-microservice/images/icon-file.png}" alt="file">
+                            <span th:text="${doc.name}">File Name</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <p th:if="${#maps.isEmpty(groupedDocs)}" style="padding-left: 20px; color: var(--text-sub);">No projects found.</p>
+        </div>
+    </div>
+
+    <div class="column-card">
+        <div class="card-header">
+            <h2 id="selected-file-title">Active Versions</h2>
+        </div>
+        <div id="active-version-container">
+            <p style="text-align: center; color: var(--text-sub); margin-top: 20px;">
+                Select a file from the left to see its version.
+            </p>
+        </div>
+    </div>
+
+    <div class="column-card">
+        <div class="card-header" style="justify-content: center;">
+            <h2>File Details</h2>
+        </div>
+
+        <form th:action="@{/documents/upload}" method="post" enctype="multipart/form-data" id="uploadForm">
+            <button type="button" class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                <img th:src="@{/document-microservice/images/icon-upload.png}" alt="upload" style="width: 20px;"> UPLOAD
+            </button>
+            <input type="file" id="fileInput" name="file" style="display: none;" onchange="document.getElementById('uploadForm').submit()">
+            <input type="hidden" name="userId" th:value="${userId}">
+        </form>
+
+        <div class="section-title">Drafts</div>
+        <ul class="version-list" style="list-style: none; padding: 0;">
+            <li th:each="draft : ${draftDocs}" class="version-item">
+                <div class="file-info">
+                    <img th:src="@{/document-microservice/images/icon-doc.png}" class="file-icon" alt="doc" style="width: 30px;">
+                    <span th:text="${draft.name}">BigBang_Final.docx</span>
+                </div>
+            </li>
+        </ul>
+
+        <div class="section-title" style="margin-top: 20px;">Collaborators</div>
+        <div class="collaborators">
+            <div style="background: #ccc; width: 45px; height: 45px; border-radius: 50%;"></div>
+            <div style="background: #bbb; width: 45px; height: 45px; border-radius: 50%;"></div>
+        </div>
+
+        <div class="section-title" style="margin-top: 20px;">Rejected versions</div>
+        <p style="font-size: 0.9rem; color: var(--text-sub); font-style: italic;">There is no rejected versions.</p>
+    </div>
+
+</div>
+
+<script>
+    function toggleFolder(element) {
+        const list = element.nextElementSibling;
+        if (list.style.display === "block") {
+            list.style.display = "none";
+        } else {
+            list.style.display = "block";
+        }
+    }
+
+    function handleFileClick(element) {
+
+        const name = element.getAttribute('data-name');
+        const description = element.getAttribute('data-description');
+        const date = element.getAttribute('data-date');
+
+        showDetails(name, description, date);
+    }
+
+    function showDetails(name, description, date) {
+        const title = document.getElementById('selected-file-title');
+        if(title) title.innerText = name;
+
+        const container = document.getElementById('active-version-container');
+        if(container) {
+            container.innerHTML = `
+            <ul class="version-list" style="list-style: none; padding: 0;">
+                <li class="version-item">
+                    <div class="file-info">
+                        <img src="/document-microservice/images/icon-doc.png" class="file-icon" alt="doc" style="width: 30px;">
+                        <div>
+                            <span style="display: block; font-weight: 600;">${name}</span>
+                            <small style="color: var(--text-sub);">${description}</small>
+                        </div>
+                    </div>
+                    <span class="file-date">${date}</span>
+                </li>
+            </ul>
+        `;
+        }
+    }
+</script>
+
+
+
+</body>
+</html>
