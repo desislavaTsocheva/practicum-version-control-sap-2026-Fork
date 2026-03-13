@@ -44,7 +44,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
-
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+    }
     public void deleteUser(UUID id) {
         userRepository.deleteById(id);
     }
@@ -67,6 +70,11 @@ public class UserService implements UserDetailsService {
         user.setPassword(encodedPassword);
 
         userRepository.save(user);
+    }
+
+    public boolean isPasswordValid(String password) {
+        String regex = "^(?=.*[0-3])(?=.*[a-z])(?=.*[A-Z]).+$";
+        return password != null && password.matches(regex);
     }
 
     @Override

@@ -5,22 +5,22 @@ import lombok.Data;
 
 @Data
 public class UserDto {
-    @NotBlank(message = "Потребителското име е задължително поле")
-    @Size(min = 4, max = 20, message = "Потребителското име трябва да е между 4 и 20 символа")
+    @NotBlank(message = "This field is required")
+    @Size(min = 4, max = 20, message = "The username needs to be between 4 and 20 symbols")
     private String username;
 
-    @NotBlank(message = "Името е задължително поле")
+    @NotBlank(message = "This field is required")
     private String firstName;
 
-    @NotBlank(message = "Фамилията е задължително поле")
+    @NotBlank(message = "This field is required")
     private String lastName;
 
-    @Email(message = "Въведете валиден имейл адрес")
-    @NotBlank(message = "Имейлът е задължително поле")
+    @Email(message = "Enter valid email address")
+    @NotBlank(message = "This field is required")
     private String email;
 
-    @Size(min = 8, message = "Паролата трябва да е поне 8 символа")
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).*$",
-            message = "Паролата трябва да съдържа поне една цифра, една малка и една главна буква")
+    @NotBlank(message = "This field is required")
+    @Size(min = 6, message = "The password needs to be at least 6 symbols")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).*$", message = "The password must contain at least one uppercase letter, one lowercase letter, and one number")
     private String password;
 }
