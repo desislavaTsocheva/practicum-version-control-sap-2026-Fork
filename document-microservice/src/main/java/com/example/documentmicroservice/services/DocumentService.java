@@ -3,6 +3,7 @@ package com.example.documentmicroservice.services;
 import com.example.documentmicroservice.models.Document;
 import com.example.documentmicroservice.repositories.DocumentRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,5 +41,10 @@ public class DocumentService {
         data.put("draftDocs", drafts);
 
         return data;
+    }
+
+    @Transactional
+    public Document saveDocument(Document document) {
+        return documentRepository.save(document);
     }
 }
