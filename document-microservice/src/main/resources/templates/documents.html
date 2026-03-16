@@ -63,12 +63,16 @@
             <h2>File Details</h2>
         </div>
 
-        <form th:action="@{/documents/upload}" method="post" enctype="multipart/form-data" id="uploadForm">
-            <button type="button" class="upload-btn" onclick="document.getElementById('fileInput').click()">
-                <img th:src="@{/document-microservice/images/icon-upload.png}" alt="upload" style="width: 20px;"> UPLOAD
-            </button>
-            <input type="file" id="fileInput" name="file" style="display: none;" onchange="document.getElementById('uploadForm').submit()">
+        <form th:action="@{documents}" method="post" enctype="multipart/form-data" id="uploadForm">
             <input type="hidden" name="userId" th:value="${userId}">
+            <input type="hidden" name="name" th:value="${username}">
+
+            <input type="file" id="fileInput" name="file" style="display: none;"
+                   onchange="document.getElementById('uploadForm').submit();">
+
+            <button type="button" class="upload-btn" onclick="document.getElementById('fileInput').click()">
+                UPLOAD
+            </button>
         </form>
 
         <div class="section-title">Drafts</div>
