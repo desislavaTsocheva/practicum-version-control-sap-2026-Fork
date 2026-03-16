@@ -26,6 +26,19 @@
                         <span th:text="${'Project ' + (iterStat.index + 1)}">Project 1</span>
                         <span class="file-count" th:text="${'(' + entry.value.size() + ')'}">(0)</span>
                     </span>
+
+                    <form th:action="@{documents}" method="post" enctype="multipart/form-data" id="uploadForm">
+                        <input type="hidden" name="userId" th:value="${userId}">
+                        <input type="hidden" name="name" th:value="${username}">
+
+                        <input type="file" id="fileInput" name="file" style="display: none;"
+                               onchange="document.getElementById('uploadForm').submit();">
+
+                        <button type="button" class="upload-btn" id="upload-btn-doc" onclick="document.getElementById('fileInput').click()">
+                            <img th:src="@{/document-microservice/images/icon-upload.png}" alt="upload" style="width: 20px; height: 20px;">
+                        </button>
+                    </form>
+
                 </div>
 
                 <ul class="nested-docs">
@@ -63,15 +76,32 @@
             <h2>File Details</h2>
         </div>
 
-        <form th:action="@{documents}" method="post" enctype="multipart/form-data" id="uploadForm">
+        <form th:action="@{documents}" method="post" enctype="multipart/form-data" id="uploadForm1">
             <input type="hidden" name="userId" th:value="${userId}">
             <input type="hidden" name="name" th:value="${username}">
 
-            <input type="file" id="fileInput" name="file" style="display: none;"
-                   onchange="document.getElementById('uploadForm').submit();">
+            <input type="file" id="fileInput1" name="file" style="display: none;"
+                   onchange="document.getElementById('uploadForm1').submit();">
 
             <button type="button" class="upload-btn" onclick="document.getElementById('fileInput').click()">
-                UPLOAD
+                <img th:src="@{/document-microservice/images/icon-upload.png}" alt="upload" style="width: 20px; height: 20px;">
+                  UPLOAD
+            </button>
+        </form>
+
+        <form action="http://localhost:8080/project-microservice/projects" method="post" id="addProject">            <input type="hidden" name="ownerId" th:value="${userId}">
+
+            <div style="margin-bottom: 10px;">
+                <input type="text" name="name" placeholder="Project Name" required
+                       style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
+            </div>
+            <div style="margin-bottom: 10px;">
+                <input type="text" name="description" placeholder="Short Description"
+                       style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
+            </div>
+
+            <button type="submit" class="upload-btn">
+                CREATE NEW PROJECT
             </button>
         </form>
 
