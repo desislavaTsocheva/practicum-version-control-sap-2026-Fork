@@ -2,9 +2,6 @@ package com.example.documentmicroservice.controllers;
 import com.example.documentmicroservice.models.Document;
 import com.example.documentmicroservice.models.File;
 import com.example.documentmicroservice.models.Version;
-import com.example.documentmicroservice.repositories.DocumentRepository;
-import com.example.documentmicroservice.repositories.FileRepository;
-import com.example.documentmicroservice.repositories.VersionRepository;
 import com.example.documentmicroservice.services.DocumentService;
 import com.example.documentmicroservice.services.FileService;
 import com.example.documentmicroservice.services.VersionService;
@@ -12,16 +9,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Controller
 public class DocumentController {
@@ -64,33 +58,32 @@ public class DocumentController {
             @RequestParam(value = "name", required = false, defaultValue = "User") String name,
             Model model) {
 
-            Document document = new Document();
-            document.setName(file.getOriginalFilename());
-            document.setDescription("Active");
-            document.setCreatedBy(userId);
-            document.setProjectId(projectId != null ? projectId : UUID.randomUUID());
-            document = documentService.saveDocument(document);
+        Document document = new Document();
+        document.setName(file.getOriginalFilename());
+        document.setDescription("Active");
+        document.setCreatedBy(userId);
+        document.setProjectId(projectId != null ? projectId : UUID.randomUUID());
+        document = documentService.saveDocument(document);
 
-            Version version = new Version();
-            version.setVersionNumber(1);
-            version.setMessage("Initial upload");
-            version.setDocumentId(document.getId());
-            version.setUserId(userId);
-            version.setActive(true);
-            version.setApproved(false);
-            version = versionService.saveVersion(version);
+        Version version = new Version();
+        version.setVersionNumber(1);
+        version.setMessage("Initial upload");
+        version.setDocumentId(document.getId());
+        version.setUserId(userId);
+        version.setActive(true);
+        version.setApproved(false);
+        version = versionService.saveVersion(version);
 
         File fileEntity = new File();
         fileEntity.setFile_path(safeGetBytes(file));
         fileEntity.setContent(file.getContentType());
         fileEntity.setVersionId(version.getId());
         fileEntity.setHistoryTimestamp(LocalDateTime.now());
-
         fileService.saveFile(fileEntity);
 
-            return "redirect:http://localhost:8080/document-microservice/documents?userId="
-                    +userId +"&name"+ name;
-        }
+        return "redirect:http://localhost:8080/document-microservice/documents?userId="
+                + userId + "&name" + name;
+    }
 
     private byte[] safeGetBytes(MultipartFile file) {
         try {
