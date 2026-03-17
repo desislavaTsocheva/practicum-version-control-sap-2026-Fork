@@ -11,36 +11,50 @@
 <div class="workspace-container">
 
     <div class="column-card">
-        <div class="card-header">
-            <div class="profile-section">
-                <img th:src="@{/document-microservice/images/profile.jpg}" alt="profile" class="profile-pic" onerror="this.style.display='none'">
-                <span class="profile-name" th:text="${username}">Mariya Georgieva</span>
+        <div class="card-header-profile">
+            <div class="profile-section-title">
+                <img th:src="@{'http://localhost:8080/auth-microservice/users/profile-pic/' + ${userId}}"
+                     alt="profile-pic"
+                     class="profile-pic"
+                     onerror="this.src='https://via.placeholder.com/60'">
+                <span class="profile-name" th:text="${username}">Username</span>
             </div>
         </div>
-
         <div class="file-tree">
+            <button type="button" class="upload-btn" id="toggleProjectBtn" onclick="showProjectFields()">
+                CREATE NEW PROJECT
+            </button>
+
+            <div id="projectFields" style="display: none; flex-direction: column;">
+                <form action="http://localhost:8080/project-microservice/projects" method="post" id="addProject"
+                      style="display: flex; flex-direction: column; gap: 12px;">
+
+                    <input type="hidden" name="ownerId" th:value="${userId}">
+
+                    <input type="text" name="name" placeholder="Project Name" required class="project-input">
+
+                    <input type="text" name="description" placeholder="Project Description (optional)"
+                           class="project-input">
+
+                    <button type="submit" class="upload-btn btn-small" style="background-color: var(--accent-green);">
+                        <img th:src="@{/document-microservice/images/icon-add.png}" alt="add"
+                             style="width: 16px; height: 16px;"> Add
+                    </button>
+                </form>
+            </div>
+
             <div th:each="entry, iterStat : ${groupedDocs}">
-                <div class="tree-item folder-toggle" onclick="toggleFolder(this)">
-                    <img th:src="@{/document-microservice/images/icon-folder.png}" alt="folder">
-                    <span class="profile-name">
-                        <span th:text="${'Project ' + (iterStat.index + 1)}">Project 1</span>
-                        <span class="file-count" th:text="${'(' + entry.value.size() + ')'}">(0)</span>
-                    </span>
-
-                    <form th:action="@{documents}" method="post" enctype="multipart/form-data" id="uploadForm">
-                        <input type="hidden" name="userId" th:value="${userId}">
-                        <input type="hidden" name="name" th:value="${username}">
-
-                        <input type="file" id="fileInput" name="file" style="display: none;"
-                               onchange="document.getElementById('uploadForm').submit();">
-
-                        <button type="button" class="upload-btn" id="upload-btn-doc" onclick="document.getElementById('fileInput').click()">
-                            <img th:src="@{/document-microservice/images/icon-upload.png}" alt="upload" style="width: 20px; height: 20px;">
-                        </button>
-                    </form>
+                <div class="folder-header"
+                     style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                    <div class="tree-item folder-toggle" onclick="toggleFolder(this)" style="margin: 0; flex-grow: 1;">
+                        <img th:src="@{/document-microservice/images/icon-folder.png}" alt="folder">
+                        <span class="profile-name">
+                            <span th:text="${'Project ' + (iterStat.index + 1)}">Project 1</span>
+                            <span class="file-count" th:text="${'(' + entry.value.size() + ')'}">(0)</span>
+                        </span>
+                    </div>
 
                 </div>
-
                 <ul class="nested-docs">
                     <li th:each="doc : ${entry.value}">
                         <div class="tree-item file-clickable"
@@ -56,7 +70,8 @@
                     </li>
                 </ul>
             </div>
-            <p th:if="${#maps.isEmpty(groupedDocs)}" style="padding-left: 20px; color: var(--text-sub);">No projects found.</p>
+            <p th:if="${#maps.isEmpty(groupedDocs)}" style="padding-left: 20px; color: var(--text-sub);">No projects
+                found.</p>
         </div>
     </div>
 
@@ -84,24 +99,9 @@
                    onchange="document.getElementById('uploadForm1').submit();">
 
             <button type="button" class="upload-btn" onclick="document.getElementById('fileInput').click()">
-                <img th:src="@{/document-microservice/images/icon-upload.png}" alt="upload" style="width: 20px; height: 20px;">
-                  UPLOAD
-            </button>
-        </form>
-
-        <form action="http://localhost:8080/project-microservice/projects" method="post" id="addProject">            <input type="hidden" name="ownerId" th:value="${userId}">
-
-            <div style="margin-bottom: 10px;">
-                <input type="text" name="name" placeholder="Project Name" required
-                       style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
-            </div>
-            <div style="margin-bottom: 10px;">
-                <input type="text" name="description" placeholder="Short Description"
-                       style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
-            </div>
-
-            <button type="submit" class="upload-btn">
-                CREATE NEW PROJECT
+                <img th:src="@{/document-microservice/images/icon-upload.png}" alt="upload"
+                     style="width: 20px; height: 20px;">
+                UPLOAD
             </button>
         </form>
 
@@ -109,7 +109,8 @@
         <ul class="version-list" style="list-style: none; padding: 0;">
             <li th:each="draft : ${draftDocs}" class="version-item">
                 <div class="file-info">
-                    <img th:src="@{/document-microservice/images/icon-doc.png}" class="file-icon" alt="doc" style="width: 30px;">
+                    <img th:src="@{/document-microservice/images/icon-doc.png}" class="file-icon" alt="doc"
+                         style="width: 30px;">
                     <span th:text="${draft.name}">BigBang_Final.docx</span>
                 </div>
             </li>
@@ -129,11 +130,12 @@
 
 <script>
     function toggleFolder(element) {
-        const list = element.nextElementSibling;
-        if (list.style.display === "block") {
-            list.style.display = "none";
-        } else {
-            list.style.display = "block";
+        const folderHeader = element.parentElement;
+        const nestedDocs = folderHeader.nextElementSibling;
+
+        if (nestedDocs && nestedDocs.classList.contains('nested-docs')) {
+            const isVisible = nestedDocs.style.display === 'block';
+            nestedDocs.style.display = isVisible ? 'none' : 'block';
         }
     }
 
@@ -148,10 +150,10 @@
 
     function showDetails(name, description, date) {
         const title = document.getElementById('selected-file-title');
-        if(title) title.innerText = name;
+        if (title) title.innerText = name;
 
         const container = document.getElementById('active-version-container');
-        if(container) {
+        if (container) {
             container.innerHTML = `
             <ul class="version-list" style="list-style: none; padding: 0;">
                 <li class="version-item">
@@ -168,8 +170,28 @@
         `;
         }
     }
-</script>
 
+    function showProjectFields() {
+        const fields = document.getElementById('projectFields');
+        const mainBtn = document.getElementById('toggleProjectBtn');
+
+        if (fields.style.display === 'flex') {
+            fields.style.display = 'none';
+            mainBtn.innerHTML = '<span>CREATE NEW PROJECT</span>';
+
+            mainBtn.style.backgroundColor = '#eef5f1';
+            mainBtn.style.color = '#5d8a6e';
+            mainBtn.style.border = '1px solid #90B69F';
+        } else {
+            fields.style.display = 'flex';
+            mainBtn.innerHTML = '<span>Cancel</span>';
+
+            mainBtn.style.backgroundColor = '#fff5f5';
+            mainBtn.style.color = '#e84c4c';
+            mainBtn.style.border = '1px solid #ffc1c1';
+        }
+    }
+</script>
 
 
 </body>

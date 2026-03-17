@@ -5,6 +5,7 @@
     --text-main: #000000;
     --text-sub: #707070;
     --border-color: #B0B0B0;
+    --hover-color: #DADFDC;
 }
 
 body {
@@ -43,6 +44,15 @@ body {
     align-items: center;
 }
 
+.card-header-profile {
+    display: flex;
+    margin-top: -15px;
+    align-items: center;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
 h2 {
     margin: 0;
     font-size: 1.5rem;
@@ -64,9 +74,16 @@ h3 {
     margin-bottom: 30px;
 }
 
+.profile-section-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 0;
+}
+
 .profile-pic {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -161,26 +178,38 @@ h3 {
     transition: 0.2s;
 }
 
-#upload-btn-doc {
-    background-color: var(--card-bg);
-    color: var(--text-main);
-    border: none;
-    padding: 15px 30px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    width: 8px;
-    height: 8px;
+.folder-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 5px 0;
+}
+.folder-header .upload-btn {
+    width: auto;
+    margin-bottom: 0;
+    padding: 8px;
+    border-radius: 10px;
+}
+
+.folder-header .tree-item {
+    margin: 0;
+}
+
+.doc-icon {
+    transition: all 0.2s ease;
+    background: transparent;
+    padding: 6px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    margin-bottom: 25px;
-    transition: 0.2s;
 }
-#upload-btn-doc:hover {
-    opacity: 0.9;
+
+.doc-icon:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+    transform: scale(1.1);
+    cursor: pointer;
 }
 
 .upload-btn:hover {
@@ -233,5 +262,69 @@ h3 {
 }
 .file-clickable:active {
     transform: scale(0.98);
+}
+.hidden-fields {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.project-input {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background-color: rgba(255, 255, 255, 0.8);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.project-input:focus {
+    border-color: var(--accent-green);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 4px rgba(144, 182, 159, 0.2);
+}
+
+.btn-small {
+    padding: 10px 20px !important;
+    width: auto !important;
+    min-width: 120px;
+    height: 40px;
+    margin-top: 5px;
+    align-self: flex-end;
+    border-radius: 12px !important;
+    font-size: 0.85rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#projectFields {
+    background: rgba(255, 255, 255, 0.3);
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(5px);
+    margin-bottom: 20px;
+}
+
+#toggleProjectBtn {
+    background-color: #eef5f1;
+    color: #5d8a6e;
+    border: 1px solid #90B69F;
+    transition: all 0.3s ease;
+}
+
+#toggleProjectBtn:hover {
+    filter: brightness(0.9);
 }
 
