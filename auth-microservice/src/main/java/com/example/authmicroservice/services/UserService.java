@@ -17,16 +17,18 @@ import java.util.UUID;
 
 @Service
 public class UserService implements UserDetailsService {
-
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final BCryptPasswordEncoder passwordEncoder;
-
 
     public UserService(UserRepository userRepository, JwtService jwtService, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public User findById(UUID id) {
+        return userRepository.findById(id).orElse(null);
     }
 
     public String authenticate(String username, String password) {

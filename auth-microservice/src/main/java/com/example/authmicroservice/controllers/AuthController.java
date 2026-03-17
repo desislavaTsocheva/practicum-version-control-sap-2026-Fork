@@ -63,7 +63,8 @@ public class AuthController {
         if (token != null) {
             User user = userService.findByUsername(request.getUsername());
             return "redirect:http://localhost:8080/document-microservice/documents?userId="
-                    + user.getId() + "&name=" + user.getUsername();
+                    + user.getId()
+                    + "&name=" + user.getUsername();
         } else {
             return "redirect:/login?error=true";
         }

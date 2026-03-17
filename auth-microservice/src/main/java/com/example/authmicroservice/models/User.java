@@ -8,6 +8,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -47,7 +50,24 @@ public class User implements UserDetails {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "profile_picture")
-    private String profilePicture = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+    private byte[] profilePicture;
+
+    @PrePersist
+    public void ensureDefaultPicture() {
+        if (this.profilePicture == null || this.profilePicture.length == 0) {
+            setDefaultPicture();
+        }
+    }
+
+    public void setDefaultPicture() {
+        try {
+            URL url = new URL("https://cdn-icons-png.flaticon.com/512/149/149071.png");
+            this.profilePicture = url.openStream().readAllBytes();
+            System.out.println("Default picture loaded successfully!");
+        } catch (Exception e) {
+            System.err.println("Failed to load default picture: " + e.getMessage());
+        }
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

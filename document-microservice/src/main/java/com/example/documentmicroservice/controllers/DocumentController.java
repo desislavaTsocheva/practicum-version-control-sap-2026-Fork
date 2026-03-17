@@ -33,6 +33,7 @@ public class DocumentController {
     public String showWorkspace(
             @RequestParam(value = "userId", required = false) UUID userId,
             @RequestParam(value = "name", required = false, defaultValue = "User") String name,
+            @RequestParam(value = "pfp", required = false) String profilePicture,
             Model model) {
 
         if (userId == null) {
@@ -43,6 +44,7 @@ public class DocumentController {
 
         model.addAttribute("userId", userId);
         model.addAttribute("username", name);
+        model.addAttribute("profilePic", profilePicture);
         model.addAttribute("groupedDocs", workspaceData.get("groupedDocs"));
         model.addAttribute("activeDocs", workspaceData.get("activeDocs"));
         model.addAttribute("draftDocs", workspaceData.get("draftDocs"));
