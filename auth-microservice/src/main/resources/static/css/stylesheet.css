@@ -8,6 +8,7 @@
     --dark-grayish-green: #4A554B;
     --white: #ffffff;
     --btn-hover-color: #647a6c;
+    --text-sub: #707070;
 }
 
 * {
@@ -235,7 +236,51 @@ section {
     color: var(--text-dark);
 }
 
-/* ANIMATIONS */
+.profile-pic-large {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.profile-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    margin-top: 30px;
+    background: rgba(255,255,255,0.4);
+    padding: 20px;
+    border-radius: 25px;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.info-item .label {
+    font-size: 0.8rem;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.info-item .value {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.upload-btn[style*="background-color: var(--border-color)"]:hover {
+    background-color: #999 !important;
+}
+
+.value[th\:case="'admin'"] { color: #d9534f; }
+.value[th\:case="'reader'"] { color: var(--text-sub); }
+
 @keyframes bounce {
     0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
     40% {transform: translateY(-10px);}

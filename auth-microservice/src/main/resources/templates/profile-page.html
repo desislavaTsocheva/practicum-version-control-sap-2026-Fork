@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile | Manage Yourself</title>
+    <link rel="stylesheet" th:href="@{/document-microservice/css/stylesheet.css}">
+    <link rel="icon" type="image/png" th:href="@{images/logo.png}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="workspace-container" style="justify-content: center; align-items: center; min-height: 100vh;">
+    <div class="column-card" style="max-width: 350px; padding: 25px; height: auto; align-items: center; text-align: center;">
+
+        <div class="card-header" style="width: 100%; justify-content: center; margin-bottom: 15px;">
+            <h2 th:text="${user.username}" style="font-size: 1.3rem;">User Profile</h2>
+        </div>
+
+        <div class="profile-main-section" style="margin-bottom: 15px;">
+            <img th:src="@{'http://localhost:8080/auth-microservice/users/profile-pic/' + ${user.id}}"
+                 alt="Profile Picture"
+                 style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+
+            <p th:text="${user.email}" style="color: #707070; font-size: 0.9rem; margin-top: 10px;">email@example.com</p>
+        </div>
+
+        <div class="profile-info-grid" style="margin-top: 15px; padding: 15px; gap: 10px;">
+            <div class="info-item" style="margin-bottom: 5px;">
+<!--                <span class="label" style="font-size: 0.75rem;">Full name</span>-->
+                <span class="value" th:text="${user.firstName} + ' ' + ${user.lastName}" style="font-size: 1rem;">Plamen Ivanov</span>
+            </div>
+
+            <div class="info-item" style="text-align: left; grid-column: span 2;">
+<!--                <span class="label" style="font-size: 0.75rem;">Permissions</span>-->
+                <div th:switch="${user.role}" style="font-size: 0.85rem; font-weight: 600;">
+                    <span th:case="'reader'">Read-only access</span>
+                    <span th:case="'admin'">Full Admin access</span>
+                    <span th:case="'author'">Author access</span>
+                    <span th:case="'editor'">Editor access</span>
+                    <span th:case="*">Undefined access</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="width: 100%; margin-top: 25px; display: flex; flex-direction: column; gap: 8px;">
+            <div style="display: flex; gap: 10px;">
+                <a th:href="@{/document-microservice/documents}" class="upload-btn"
+                   style="flex: 1; padding: 10px; font-size: 0.8rem; text-decoration: none; background-color: #eee; color: #333; display: flex; justify-content: center; align-items: center;">
+                    BACK
+                </a>
+                <button class="upload-btn" style="flex: 1; padding: 10px; font-size: 0.8rem;">
+                    EDIT
+                </button>
+            </div>
+
+            <div th:if="${user.role == 'admin'}">
+                <a th:href="@{/auth-microservice/admin/dashboard}" class="btn-custom admin-btn"
+                   style="padding: 10px; font-size: 0.8rem; text-decoration: none; width: 100%; display: block;">
+                    🛡 ADMIN PANEL
+                </a>
+            </div>
+        </div>
+
+        <a th:href="@{/logout}" style="margin-top: 20px; color: #e84c4c; font-weight: 600; text-decoration: none; font-size: 0.8rem; display: block;">
+            LOGOUT
+        </a>
+    </div>
+</div>
+
+</body>
+</html>

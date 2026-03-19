@@ -5,11 +5,13 @@ import com.example.authmicroservice.services.UserService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.security.Principal;
 import java.util.UUID;
 
 @Controller
@@ -36,5 +38,12 @@ public class UserController {
                     .body(user.getProfilePicture());
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/users/profile/{id}")
+    public String getUserProfile(@PathVariable UUID id, Model model) {
+        User user = userService.findById(id);
+        model.addAttribute("user", user);
+        return "profile-page";
     }
 }

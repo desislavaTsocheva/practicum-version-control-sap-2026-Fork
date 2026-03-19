@@ -33,8 +33,24 @@ body {
     padding: 40px;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+
+    /* ТОВА Е КЛЮЧЪТ: */
+    overflow-y: auto; /* Само ако е нужно */
+    overflow-x: hidden;
+
+    /* Силно скриване за всички браузъри */
+    scrollbar-width: none !important; /* Firefox */
+    -ms-overflow-style: none !important; /* IE/Edge */
 }
+
+/* Скриване за Chrome/Safari/Brave/Opera */
+.column-card::-webkit-scrollbar {
+    width: 0px !important;
+    height: 0px !important;
+    display: none !important;
+    background: transparent !important;
+}
+
 
 .card-header {
     border-bottom: 2px solid var(--border-color);
@@ -91,6 +107,25 @@ h3 {
 .profile-name {
     font-weight: 700;
     font-size: 1.1rem;
+}
+
+.profile-link {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    cursor: pointer;
+}
+
+.profile-link:hover {
+    transform: translateY(-2px);
+    opacity: 0.85;
+}
+
+.profile-pic {
+    border: 2px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+.profile-link:hover .profile-pic {
+    border-color: var(--accent-green);
 }
 
 .file-tree, .file-tree ul {
@@ -182,9 +217,15 @@ h3 {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    padding: 5px 0;
+    padding: 8px 10px;
+    border-radius: 12px;
+    transition: background 0.2s;
 }
+
+.folder-header:hover {
+    background-color: var(--hover-color);
+}
+
 .folder-header .upload-btn {
     width: auto;
     margin-bottom: 0;
@@ -245,11 +286,11 @@ h3 {
     cursor: pointer;
     transition: 0.2s;
 }
-.folder-toggle:hover {
-    opacity: 0.8;
-    background: rgba(0,0,0,0.05);
-    border-radius: 10px;
-}
+/*.folder-toggle:hover {*/
+/*    opacity: 0.8;*/
+/*    background: rgba(0,0,0,0.05);*/
+/*    border-radius: 10px;*/
+/*}*/
 .file-count {
     font-weight: 400;
     color: var(--text-sub);
@@ -315,13 +356,6 @@ h3 {
     border: 1px solid rgba(255, 255, 255, 0.5);
     backdrop-filter: blur(5px);
     margin-bottom: 20px;
-}
-
-#toggleProjectBtn {
-    background-color: #eef5f1;
-    color: #5d8a6e;
-    border: 1px solid #90B69F;
-    transition: all 0.3s ease;
 }
 
 #toggleProjectBtn:hover {
