@@ -5,20 +5,21 @@ import com.example.projectmicroservice.repositories.ProjectRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProjectService {
     private final ProjectRepository projectRepository;
-
     public ProjectService(ProjectRepository projectRepository) {
         this.projectRepository = projectRepository;
     }
 
-    public List<Project> getAllProjects() {
-        return projectRepository.findAll();
+    public List<Project> getAllProjects(UUID userId) {
+        return projectRepository.findByOwnerId(userId);
     }
 
     public void saveProject(Project project) {
         projectRepository.save(project);
     }
+
 }

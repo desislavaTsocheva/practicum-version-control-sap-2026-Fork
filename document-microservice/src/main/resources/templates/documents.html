@@ -25,9 +25,9 @@
         <div class="file-tree">
             <button type="button" class="upload-btn" id="toggleProjectBtn" onclick="showProjectFields()">NEW PROJECT</button>
             <div id="projectFields" style="display: none; flex-direction: column;">
-                <form action="http://localhost:8080/project-microservice/projects" method="post" id="addProject"
-                      style="display: flex; flex-direction: column; gap: 12px;">
+                <form action="http://localhost:8080/project-microservice/documents" method="post" id="addProject" style="display: flex; flex-direction: column; gap: 12px;">
                     <input type="hidden" name="ownerId" th:value="${userId}">
+
                     <input type="text" name="name" placeholder="Project Name" required class="project-input">
                     <input type="text" name="description" placeholder="Project Description (optional)"
                            class="project-input">
@@ -38,43 +38,43 @@
                 </form>
             </div>
 
-            <div th:each="entry, iterStat : ${groupedDocs}">
+            <div th:each="entry : ${groupedDocs}">
                 <div class="folder-header">
                     <div class="tree-item folder-toggle" onclick="toggleFolder(this)" style="margin: 0; flex-grow: 1;">
                         <img th:src="@{/document-microservice/images/icon-folder.png}" alt="folder">
                         <span class="profile-name">
-                <span th:text="${'Project ' + (iterStat.index + 1)}">Project 1</span>
-                <span class="file-count" th:text="${'(' + entry.value.size() + ')'}">(0)</span>
-            </span>
+                            <span th:text="${entry.key}">Project Name</span>
+                            <span class="file-count" th:text="${entry.value != null ? '(' + entry.value.size() + ')' : '(0)'}">(0)</span>
+                        </span>
                     </div>
 
-                    <form th:action="@{documents}" method="post" enctype="multipart/form-data" class="uploadFormInline" style="margin: 0;">
+                    <form th:action="@{/documents}" method="post" enctype="multipart/form-data" class="uploadFormInline" style="margin: 0;">
                         <input type="hidden" name="userId" th:value="${userId}">
                         <input type="hidden" name="name" th:value="${username}">
+                        <input type="hidden" name="projectName" th:value="${entry.key}">
                         <input type="file" name="file" class="fileInputHidden" style="display: none;" onchange="this.form.submit();">
-
                         <button type="button" class="doc-icon" onclick="this.previousElementSibling.click()" style="background: transparent; border: none;">
                             <img th:src="@{/document-microservice/images/icon-upload.png}" alt="upload" style="width: 18px; height: 18px;">
                         </button>
                     </form>
                 </div>
 
-                <ul class="nested-docs">
+                <ul class="nested-docs" style="display: none;">
                     <li th:each="doc : ${entry.value}">
                         <div class="tree-item file-clickable"
                              style="cursor: pointer;"
                              th:data-name="${doc.name}"
                              th:data-description="${doc.description}"
-                             th:data-date="${#temporals.format(doc.createdAt, 'dd.MM.yyyy')}"
+                             th:data-date="${doc.createdAt != null ? #temporals.format(doc.createdAt, 'dd.MM.yyyy') : 'N/A'}"
                              onclick="handleFileClick(this)">
                             <img th:src="@{/document-microservice/images/icon-file.png}" alt="file">
                             <span th:text="${doc.name}">File Name</span>
                         </div>
                     </li>
                 </ul>
-            </div>
-            <p th:if="${#maps.isEmpty(groupedDocs)}" style="padding-left: 20px; color: var(--text-sub);">No projects
-                found.</p>
+            </div> <p th:if="${#maps.isEmpty(groupedDocs)}" style="padding-left: 20px; color: var(--text-sub); margin-top: 20px;">
+            No projects found.
+        </p>
         </div>
     </div>
 
@@ -94,14 +94,14 @@
             <h2>File Details</h2>
         </div>
 
-        <form th:action="@{documents}" method="post" enctype="multipart/form-data" id="uploadForm1">
+        <form th:action="@{/documents}" method="post" enctype="multipart/form-data" id="uploadForm1">
             <input type="hidden" name="userId" th:value="${userId}">
             <input type="hidden" name="name" th:value="${username}">
 
             <input type="file" id="fileInput1" name="file" style="display: none;"
                    onchange="document.getElementById('uploadForm1').submit();">
 
-            <button type="button" class="upload-btn" onclick="document.getElementById('fileInput').click()">
+            <button type="button" class="upload-btn" onclick="document.getElementById('fileInput1').click()">
                 <img th:src="@{/document-microservice/images/icon-upload.png}" alt="upload"
                      style="width: 20px; height: 20px;">
                 UPLOAD
@@ -143,11 +143,9 @@
     }
 
     function handleFileClick(element) {
-
         const name = element.getAttribute('data-name');
         const description = element.getAttribute('data-description');
         const date = element.getAttribute('data-date');
-
         showDetails(name, description, date);
     }
 
@@ -181,21 +179,18 @@
         if (fields.style.display === 'flex') {
             fields.style.display = 'none';
             mainBtn.innerHTML = '<span>NEW PROJECT</span>';
-
             mainBtn.style.backgroundColor = '#90B69F';
             mainBtn.style.color = '#000';
             mainBtn.style.border = '1px solid #90B69F';
         } else {
             fields.style.display = 'flex';
             mainBtn.innerHTML = '<span>Cancel</span>';
-
             mainBtn.style.backgroundColor = '#fff5f5';
             mainBtn.style.color = '#e84c4c';
             mainBtn.style.border = '1px solid #ffc1c1';
         }
     }
 </script>
-
 
 </body>
 </html>

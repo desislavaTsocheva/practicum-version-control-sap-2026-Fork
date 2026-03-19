@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -22,6 +23,8 @@ public class DocumentController {
     private final DocumentService documentService;
     private final FileService fileService;
     private final VersionService versionService;
+
+    private final RestTemplate restTemplate = new RestTemplate();
 
     public DocumentController(DocumentService documentService, FileService fileService, VersionService versionService) {
         this.documentService = documentService;
@@ -40,18 +43,45 @@ public class DocumentController {
             return "redirect:/error";
         }
 
+        // 1. Вземаме данните за документите от текущия сървис
         Map<String, Object> workspaceData = documentService.getWorkspaceData(userId);
 
+        @SuppressWarnings("unchecked")
+        Map<String, Object> groupedDocs = (Map<String, Object>) workspaceData.getOrDefault("groupedDocs", new java.util.HashMap<>());
+
+        // 2. Вземаме всички проекти от Project Microservice чрез RestTemplate
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            // Пътят минава през Gateway-а (порт 8080)
+            String url = "http://localhost:8080/project-microservice/projects/user/" + userId;
+
+            // Вземаме проектите като списък от мапове (за да не правим нови DTO класове)
+            java.util.List<java.util.Map<String, Object>> allProjects = restTemplate.getForObject(url, java.util.List.class);
+
+            if (allProjects != null) {
+                for (java.util.Map<String, Object> proj : allProjects) {
+                    String projectName = (String) proj.get("name");
+                    // Ако проектът го няма в списъка (защото е празен), го добавяме ръчно
+                    if (!groupedDocs.containsKey(projectName)) {
+                        groupedDocs.put(projectName, new java.util.ArrayList<>());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Ако проектният сървис падне, логваме грешката, но пак зареждаме останалото
+            System.err.println("Could not fetch projects: " + e.getMessage());
+        }
+
+        // 3. Зареждаме всичко в модела
         model.addAttribute("userId", userId);
         model.addAttribute("username", name);
-        model.addAttribute("profilePic", profilePicture);
-        model.addAttribute("groupedDocs", workspaceData.get("groupedDocs"));
+        model.addAttribute("groupedDocs", groupedDocs);
         model.addAttribute("activeDocs", workspaceData.get("activeDocs"));
         model.addAttribute("draftDocs", workspaceData.get("draftDocs"));
 
         return "documents";
     }
-
+    
     @PostMapping("/documents")
     public String uploadDocument(
             @RequestParam("file") MultipartFile file,
