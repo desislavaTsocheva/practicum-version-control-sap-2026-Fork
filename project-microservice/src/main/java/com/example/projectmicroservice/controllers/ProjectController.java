@@ -42,6 +42,12 @@ public class ProjectController {
     public List<Project> getProjectsByUser(@PathVariable UUID userId) {
         return projectService.getAllProjects(userId);
     }
+
+    @PostMapping("/projects")
+    public String createProject(@ModelAttribute Project project) {
+        projectService.saveProject(project);
+        return "redirect:http://localhost:8080/document-microservice/documents?userId=" + project.getOwnerId();
+    }
 }
 
 
