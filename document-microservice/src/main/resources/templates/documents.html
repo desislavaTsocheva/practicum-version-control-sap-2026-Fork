@@ -12,30 +12,25 @@
 
     <div class="column-card">
         <div class="card-header-profile">
-            <div class="profile-section-title">
-                <img th:src="@{'http://localhost:8080/auth-microservice/users/profile-pic/' + ${userId}}"
-                     alt="profile-pic"
-                     class="profile-pic"
-                     onerror="this.src='https://via.placeholder.com/60'">
-                <span class="profile-name" th:text="${username}">Username</span>
-            </div>
+            <a th:href="@{'/auth-microservice/users/profile/' + ${userId}}" class="profile-link" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px;">
+                <div class="profile-section-title">
+                    <img th:src="@{'http://localhost:8080/auth-microservice/users/profile-pic/' + ${userId}}"
+                         alt="profile-pic"
+                         class="profile-pic"
+                         onerror="this.src='https://via.placeholder.com/60'">
+                    <span class="profile-name" th:text="${username}">Username</span>
+                </div>
+            </a>
         </div>
         <div class="file-tree">
-            <button type="button" class="upload-btn" id="toggleProjectBtn" onclick="showProjectFields()">
-                CREATE NEW PROJECT
-            </button>
-
+            <button type="button" class="upload-btn" id="toggleProjectBtn" onclick="showProjectFields()">NEW PROJECT</button>
             <div id="projectFields" style="display: none; flex-direction: column;">
                 <form action="http://localhost:8080/project-microservice/projects" method="post" id="addProject"
                       style="display: flex; flex-direction: column; gap: 12px;">
-
                     <input type="hidden" name="ownerId" th:value="${userId}">
-
                     <input type="text" name="name" placeholder="Project Name" required class="project-input">
-
                     <input type="text" name="description" placeholder="Project Description (optional)"
                            class="project-input">
-
                     <button type="submit" class="upload-btn btn-small" style="background-color: var(--accent-green);">
                         <img th:src="@{/document-microservice/images/icon-add.png}" alt="add"
                              style="width: 16px; height: 16px;"> Add
@@ -44,17 +39,26 @@
             </div>
 
             <div th:each="entry, iterStat : ${groupedDocs}">
-                <div class="folder-header"
-                     style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <div class="folder-header">
                     <div class="tree-item folder-toggle" onclick="toggleFolder(this)" style="margin: 0; flex-grow: 1;">
                         <img th:src="@{/document-microservice/images/icon-folder.png}" alt="folder">
                         <span class="profile-name">
-                            <span th:text="${'Project ' + (iterStat.index + 1)}">Project 1</span>
-                            <span class="file-count" th:text="${'(' + entry.value.size() + ')'}">(0)</span>
-                        </span>
+                <span th:text="${'Project ' + (iterStat.index + 1)}">Project 1</span>
+                <span class="file-count" th:text="${'(' + entry.value.size() + ')'}">(0)</span>
+            </span>
                     </div>
 
+                    <form th:action="@{documents}" method="post" enctype="multipart/form-data" class="uploadFormInline" style="margin: 0;">
+                        <input type="hidden" name="userId" th:value="${userId}">
+                        <input type="hidden" name="name" th:value="${username}">
+                        <input type="file" name="file" class="fileInputHidden" style="display: none;" onchange="this.form.submit();">
+
+                        <button type="button" class="doc-icon" onclick="this.previousElementSibling.click()" style="background: transparent; border: none;">
+                            <img th:src="@{/document-microservice/images/icon-upload.png}" alt="upload" style="width: 18px; height: 18px;">
+                        </button>
+                    </form>
                 </div>
+
                 <ul class="nested-docs">
                     <li th:each="doc : ${entry.value}">
                         <div class="tree-item file-clickable"
@@ -63,7 +67,6 @@
                              th:data-description="${doc.description}"
                              th:data-date="${#temporals.format(doc.createdAt, 'dd.MM.yyyy')}"
                              onclick="handleFileClick(this)">
-
                             <img th:src="@{/document-microservice/images/icon-file.png}" alt="file">
                             <span th:text="${doc.name}">File Name</span>
                         </div>
@@ -177,10 +180,10 @@
 
         if (fields.style.display === 'flex') {
             fields.style.display = 'none';
-            mainBtn.innerHTML = '<span>CREATE NEW PROJECT</span>';
+            mainBtn.innerHTML = '<span>NEW PROJECT</span>';
 
-            mainBtn.style.backgroundColor = '#eef5f1';
-            mainBtn.style.color = '#5d8a6e';
+            mainBtn.style.backgroundColor = '#90B69F';
+            mainBtn.style.color = '#000';
             mainBtn.style.border = '1px solid #90B69F';
         } else {
             fields.style.display = 'flex';
