@@ -16,8 +16,7 @@
                 <div class="profile-section-title">
                     <img th:src="@{'http://localhost:8080/auth-microservice/users/profile-pic/' + ${userId}}"
                          alt="profile-pic"
-                         class="profile-pic"
-                         onerror="this.src='https://via.placeholder.com/60'">
+                         class="profile-pic">
                     <span class="profile-name" th:text="${username}">Username</span>
                 </div>
             </a>

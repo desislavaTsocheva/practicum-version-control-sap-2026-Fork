@@ -21,7 +21,7 @@ public class File {
     private UUID id;
 
     @Lob
-    @Column(name = "filepath", nullable =false, length=255)
+    @Column(name = "filepath", nullable =false, columnDefinition = "LONGBLOB")
     private byte[] file_path;
 
 
@@ -32,7 +32,7 @@ public class File {
     private String comment;
 
     @Lob
-    @Column(name = "draft", columnDefinition = "VARBINARY(MAX)")
+    @Column(name = "draft", columnDefinition = "LONGBLOB")
     private byte[] draft;
 
     @Column(name = "history_timestamp")

@@ -53,11 +53,8 @@ public class DocumentController {
             RestTemplate restTemplate = new RestTemplate();
             String url = "http://localhost:8080/project-microservice/projects/user/" + userId;
 
-            // В showWorkspace метода на DocumentController:
-
             allProjects = restTemplate.getForObject(url, List.class);
             if (allProjects != null) {
-                // ДОБАВИ ТОЗИ РЕД:
                 model.addAttribute("allProjects", allProjects);
 
                 for (Map<String, Object> proj : allProjects) {
@@ -77,7 +74,7 @@ public class DocumentController {
         model.addAttribute("groupedDocs", groupedDocs);
         model.addAttribute("activeDocs", workspaceData.get("activeDocs"));
         model.addAttribute("draftDocs", workspaceData.get("draftDocs"));
-        model.addAttribute("allProjects", allProjects); // Списъкът, който вземаш от Project Microservice
+        model.addAttribute("allProjects", allProjects);
         return "documents";
     }
 
