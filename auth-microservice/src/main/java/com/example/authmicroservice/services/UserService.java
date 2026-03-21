@@ -3,6 +3,7 @@ package com.example.authmicroservice.services;
 import com.example.authmicroservice.dto.UserDto;
 import com.example.authmicroservice.models.User;
 import com.example.authmicroservice.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,6 +45,11 @@ public class UserService implements UserDetailsService {
 
     public List<User> getUsers() {
         return userRepository.findAll();
+    }
+
+    @Transactional
+    public void save(User user) {
+        userRepository.save(user);
     }
 
     public User findByUsername(String username) {

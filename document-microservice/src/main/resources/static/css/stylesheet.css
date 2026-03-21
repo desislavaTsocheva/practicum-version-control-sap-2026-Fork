@@ -34,16 +34,13 @@ body {
     display: flex;
     flex-direction: column;
 
-    /* ТОВА Е КЛЮЧЪТ: */
-    overflow-y: auto; /* Само ако е нужно */
+    overflow-y: auto;
     overflow-x: hidden;
 
-    /* Силно скриване за всички браузъри */
-    scrollbar-width: none !important; /* Firefox */
-    -ms-overflow-style: none !important; /* IE/Edge */
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
 }
 
-/* Скриване за Chrome/Safari/Brave/Opera */
 .column-card::-webkit-scrollbar {
     width: 0px !important;
     height: 0px !important;

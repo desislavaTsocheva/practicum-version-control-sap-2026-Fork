@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "projects", schema = "dbo")
+@Table(name = "projects")
 public class Project {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
