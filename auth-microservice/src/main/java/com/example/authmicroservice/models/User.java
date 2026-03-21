@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +25,7 @@ import java.util.UUID;
 @Table(name = "users")
 public class User implements UserDetails {
     @Id
+    @JdbcTypeCode(java.sql.Types.BINARY)
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
@@ -49,7 +51,8 @@ public class User implements UserDetails {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "profile_picture")
+    @Lob
+    @Column(name = "profile_picture", columnDefinition = "LONGBLOB")
     private byte[] profilePicture;
 
     @PrePersist
