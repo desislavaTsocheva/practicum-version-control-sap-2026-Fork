@@ -30,7 +30,9 @@
                     <input type="text" name="name" placeholder="Project Name" required class="project-input">
                     <input type="text" name="description" placeholder="Project Description (optional)" class="project-input">
                     <button type="submit" class="upload-btn btn-small" style="background-color: #90B69F;">
-                        Add Project
+                        <img th:src="@{/document-microservice/images/icon-add.png}" alt="add"
+                             style="width: 18px; height: 18px; object-fit: contain;">
+                        ADD
                     </button>
                 </form>
             </div>
@@ -178,10 +180,17 @@
         const mainBtn = document.getElementById('toggleProjectBtn');
         if (fields.style.display === 'flex') {
             fields.style.display = 'none';
-            mainBtn.innerText = 'NEW PROJECT';
+            mainBtn.innerHTML = '<span>NEW PROJECT</span>';
+
+            mainBtn.style.backgroundColor = '#90B69F';
+            mainBtn.style.color = '#000';
+            mainBtn.style.border = '1px solid #90B69F';
         } else {
             fields.style.display = 'flex';
-            mainBtn.innerText = 'Cancel';
+            mainBtn.innerHTML = '<span>Cancel</span>';
+            mainBtn.style.backgroundColor = '#f3caca';
+            mainBtn.style.color = '#b31c1c';
+            mainBtn.style.border = '1px solid #b31c1c';
         }
     }
 </script>

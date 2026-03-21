@@ -2,70 +2,108 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>My Profile | Manage Yourself</title>
-    <link rel="stylesheet" th:href="@{/document-microservice/css/stylesheet.css}">
-    <link rel="icon" type="image/png" th:href="@{images/logo.png}">
+    <title>My Profile</title>
+    <link rel="stylesheet" href="../static/css/stylesheet.css" th:href="@{/auth-microservice/css/stylesheet.css}">
+    <link rel="icon" type="image/png" th:href="@{/auth-microservice/images/logo.png}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+<div class="profile-page-wrapper">
+    <div class="profile-card">
 
-<div class="workspace-container" style="justify-content: center; align-items: center; min-height: 100vh;">
-    <div class="column-card" style="max-width: 350px; padding: 25px; height: auto; align-items: center; text-align: center;">
-
-        <div class="card-header" style="width: 100%; justify-content: center; margin-bottom: 15px;">
-            <h2 th:text="${user.username}" style="font-size: 1.3rem;">User Profile</h2>
+        <div class="profile-header">
+            <h2 th:text="${user.username}">Username</h2>
+            <div th:switch="${user.role}" class="role-badge">
+                <span th:case="'admin'" class="badge admin">ADMIN</span>
+                <span th:case="'editor'" class="badge editor">EDITOR</span>
+                <span th:case="*" class="badge reader">USER</span>
+            </div>
         </div>
 
-        <div class="profile-main-section" style="margin-bottom: 15px;">
+        <div class="profile-avatar-container">
             <img th:src="@{'http://localhost:8080/auth-microservice/users/profile-pic/' + ${user.id}}"
                  alt="Profile Picture"
-                 style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
-
-            <p th:text="${user.email}" style="color: #707070; font-size: 0.9rem; margin-top: 10px;">email@example.com</p>
+                 class="main-profile-pic"
+                 onerror="this.src='https://via.placeholder.com/120'">
         </div>
-
-        <div class="profile-info-grid" style="margin-top: 15px; padding: 15px; gap: 10px;">
-            <div class="info-item" style="margin-bottom: 5px;">
-<!--                <span class="label" style="font-size: 0.75rem;">Full name</span>-->
-                <span class="value" th:text="${user.firstName} + ' ' + ${user.lastName}" style="font-size: 1rem;">Plamen Ivanov</span>
+        <div class="profile-details">
+            <div class="edit-group">
+                <h3 id="name-display" th:text="${user.firstName} + ' ' + ${user.lastName}">Full Name</h3>
+                <div class="input-with-icon" style="display: none;">
+                    <input type="text" id="firstName-input" th:value="${user.firstName}" class="edit-input" placeholder="First Name">
+                    <input type="text" id="lastName-input" th:value="${user.lastName}" class="edit-input" placeholder="Last Name">
+                    <span class="pencil-icon">✎ Editing Name</span>
+                </div>
             </div>
 
-            <div class="info-item" style="text-align: left; grid-column: span 2;">
-<!--                <span class="label" style="font-size: 0.75rem;">Permissions</span>-->
-                <div th:switch="${user.role}" style="font-size: 0.85rem; font-weight: 600;">
-                    <span th:case="'reader'">Read-only access</span>
-                    <span th:case="'admin'">Full Admin access</span>
-                    <span th:case="'author'">Author access</span>
-                    <span th:case="'editor'">Editor access</span>
-                    <span th:case="*">Undefined access</span>
+            <div class="edit-group">
+                <p id="email-display" class="profile-email" th:text="${user.email}">email@example.com</p>
+                <div class="input-with-icon" style="display: none;">
+                    <input type="email" id="email-input" th:value="${user.email}" class="edit-input" placeholder="Email Address">
+                    <span class="pencil-icon">✎ Editing Email</span>
                 </div>
             </div>
         </div>
-
-        <div style="width: 100%; margin-top: 25px; display: flex; flex-direction: column; gap: 8px;">
-            <div style="display: flex; gap: 10px;">
-                <a th:href="@{/document-microservice/documents}" class="upload-btn"
-                   style="flex: 1; padding: 10px; font-size: 0.8rem; text-decoration: none; background-color: #eee; color: #333; display: flex; justify-content: center; align-items: center;">
-                    BACK
-                </a>
-                <button class="upload-btn" style="flex: 1; padding: 10px; font-size: 0.8rem;">
-                    EDIT
-                </button>
+        <div class="profile-actions">
+            <div class="button-group">
+                <a href="javascript:history.back()" class="btn btn-secondary">BACK</a>
+                <button class="btn btn-primary" id="edit-btn" onclick="toggleEditMode()">EDIT</button>
+                <button class="btn btn-success" id="save-btn" style="display: none;" onclick="saveChanges()">SAVE</button>
             </div>
 
-            <div th:if="${user.role == 'admin'}">
-                <a th:href="@{/auth-microservice/admin/dashboard}" class="btn-custom admin-btn"
-                   style="padding: 10px; font-size: 0.8rem; text-decoration: none; width: 100%; display: block;">
+            <div th:if="${user.role == 'admin'}" class="admin-section">
+                <a th:href="@{/auth-microservice/admin/dashboard}" class="btn btn-admin">
                     🛡 ADMIN PANEL
                 </a>
             </div>
-        </div>
 
-        <a th:href="@{/logout}" style="margin-top: 20px; color: #e84c4c; font-weight: 600; text-decoration: none; font-size: 0.8rem; display: block;">
-            LOGOUT
-        </a>
+            <a th:href="@{/auth-microservice/}" class="logout-link">LOGOUT</a>
+        </div>
     </div>
 </div>
+<script>
+    function toggleEditMode() {
+        document.getElementById('name-display').style.display = 'none';
+        document.getElementById('email-display').style.display = 'none';
 
+        let inputs = document.querySelectorAll('.input-with-icon');
+        inputs.forEach(div => div.style.display = 'flex');
+
+        document.getElementById('edit-btn').style.display = 'none';
+        document.getElementById('save-btn').style.display = 'block';
+    }
+
+    function saveChanges() {
+        const userId = "[[${user.id}]]";
+        const token = localStorage.getItem('token');
+
+        const updatedData = {
+            firstName: document.getElementById('firstName-input').value,
+            lastName: document.getElementById('lastName-input').value,
+            email: document.getElementById('email-input').value
+        };
+
+        fetch(`/auth-microservice/users/profile/update/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify(updatedData)
+        })
+            .then(response => {
+                if (response.status === 403 || response.status === 401) {
+                    alert("Session has expired");
+                    window.location.href = "/login";
+                } else if (response.ok) {
+                    alert("You saved the changes!");
+                    location.reload();
+                } else {
+                    alert("Error occurred!");
+                }
+            })
+            .catch(err => console.error('Fetch Error:', err));
+    }
+</script>
 </body>
 </html>
