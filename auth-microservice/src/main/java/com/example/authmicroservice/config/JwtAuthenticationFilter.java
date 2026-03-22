@@ -29,16 +29,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String path = request.getServletPath();
-        return path.startsWith("/auth-microservice/users/profile-pic/") ||
-                path.startsWith("/css/") ||
-                path.startsWith("/js/");
-    }
-
-    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
         String token = null;
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
@@ -47,34 +40,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         }
-
         if (token == null) {
             String authHeader = request.getHeader("Authorization");
             if (authHeader != null && authHeader.startsWith("Bearer ")) {
                 token = authHeader.substring(7);
             }
         }
-
         if (token != null) {
             try {
                 String username = jwtService.extractUsername(token);
 
                 if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                     UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
                     if (userDetails != null && jwtService.isTokenValid(token, userDetails.getUsername())) {
                         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                                 userDetails,
                                 null,
                                 userDetails.getAuthorities()
                         );
+
                         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                        System.out.println("Authenticated user: " + username + " with roles: " + userDetails.getAuthorities());
                     }
                 }
             } catch (Exception e) {
-                logger.error("JWT Error: " + e.getMessage());
+                System.err.println("JWT Error: " + e.getMessage());
             }
         }
+
         filterChain.doFilter(request, response);
     }
 }

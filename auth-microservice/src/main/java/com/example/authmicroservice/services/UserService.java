@@ -4,8 +4,6 @@ import com.example.authmicroservice.dto.UserDto;
 import com.example.authmicroservice.models.User;
 import com.example.authmicroservice.repositories.UserRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -58,8 +56,14 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
     }
-    public void deleteUser(UUID id) {
-        userRepository.deleteById(id);
+
+    @Transactional
+    public boolean deleteUser(UUID userId) {
+        if (userRepository.existsById(userId)) {
+            userRepository.deleteById(userId);
+            return true;
+        }
+        return false;
     }
 
     public boolean isUsernameAvailable(String username) {

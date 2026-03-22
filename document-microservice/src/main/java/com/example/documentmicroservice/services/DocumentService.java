@@ -28,8 +28,6 @@ public class DocumentService {
         List<Document> allDocs = documentRepository.findByCreatedBy(userId);
         Map<String, Object> data = new HashMap<>();
 
-        // ПРОМЯНА: Групираме по Description (където пазим името на проекта)
-        // вместо по ProjectId, за да се виждат в една и съща папка в UI
         Map<String, List<Document>> tree = allDocs.stream()
                 .collect(Collectors.groupingBy(doc ->
                         doc.getDescription() != null ? doc.getDescription() : "General"
@@ -55,9 +53,13 @@ public class DocumentService {
         Document doc = new Document();
         doc.setName(file.getOriginalFilename());
         doc.setProjectId(projectId);
-        doc.setCreatedBy(userId); // Важно!
+        doc.setCreatedBy(userId);
         doc.setCreatedAt(LocalDateTime.now());
-        doc.setDescription("Active"); // Или каквото решиш
+        doc.setDescription("Active");
         documentRepository.save(doc);
+    }
+
+    public long countAllDocuments() {
+        return documentRepository.count();
     }
 }

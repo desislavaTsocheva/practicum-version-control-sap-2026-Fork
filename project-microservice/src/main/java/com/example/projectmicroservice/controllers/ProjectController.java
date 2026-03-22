@@ -2,7 +2,9 @@ package com.example.projectmicroservice.controllers;
 import com.example.projectmicroservice.models.Project;
 import com.example.projectmicroservice.services.ProjectService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,6 +49,12 @@ public class ProjectController {
     public String createProject(@ModelAttribute Project project) {
         projectService.saveProject(project);
         return "redirect:http://localhost:8080/document-microservice/documents?userId=" + project.getOwnerId();
+    }
+
+    @GetMapping("/projects/count")
+    @ResponseBody
+    public long countProjects() {
+        return projectService.countAllProjects();
     }
 }
 
