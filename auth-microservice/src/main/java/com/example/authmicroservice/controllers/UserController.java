@@ -8,10 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -54,19 +56,28 @@ public class UserController {
         return "profile-page";
     }
 
-    @PostMapping("/users/profile/update/{id}")
-    @ResponseBody
-    public ResponseEntity<?> updateProfile(@PathVariable UUID id, @RequestBody Map<String, String> updates) {
+    @PostMapping(path = "/users/profile/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateProfile(
+            @PathVariable UUID id,
+            @RequestParam("firstName") String firstName,
+            @RequestParam("lastName") String lastName,
+            @RequestParam("email") String email,
+            @RequestParam(value = "profilePicture", required = false) MultipartFile profilePicture) throws IOException {
+
         User user = userService.findById(id);
         if (user == null) {
             return ResponseEntity.notFound().build();
         }
 
-        user.setFirstName(updates.get("firstName"));
-        user.setLastName(updates.get("lastName"));
-        user.setEmail(updates.get("email"));
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setEmail(email);
+
+        if (profilePicture != null && !profilePicture.isEmpty()) {
+            user.setProfilePicture(profilePicture.getBytes());
+        }
 
         userService.save(user);
-        return ResponseEntity.ok().body("{\"message\": \"Success\"}");
+        return ResponseEntity.ok().build();
     }
 }

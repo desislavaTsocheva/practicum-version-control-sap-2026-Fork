@@ -1,20 +1,31 @@
 package com.example.authmicroservice.config;
 
+import jakarta.servlet.Filter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @EnableWebSecurity
 public class ProjectConfiguration {
+    private final JwtAuthenticationFilter jwtAuthFilter;
+
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    public ProjectConfiguration(JwtAuthenticationFilter jwtAuthFilter) {
+        this.jwtAuthFilter = jwtAuthFilter;
     }
 
     @Bean
@@ -22,17 +33,22 @@ public class ProjectConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/js/**", "/images/**", "/static/**").permitAll()
-                        .requestMatchers("/register", "/login").permitAll()
-                        .anyRequest().permitAll()
+                        .requestMatchers("/","/css/**", "/js/**", "/images/**", "/static/**").permitAll()
+                        .requestMatchers("/login", "/register", "/auth-microservice/login").permitAll()
+                        .requestMatchers("/users/profile-pic/**").permitAll()
+                        .requestMatchers("/users/profile/**").authenticated()
+                        .requestMatchers("/auth-microservice/admin/**").hasRole("admin")
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
                 .logout(logout -> logout
                         .logoutUrl("/auth-microservice/")
-                        .logoutSuccessUrl("/login?logout")
-                        .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
+                        .logoutSuccessUrl("/auth-microservice/")
+                        .deleteCookies("token", "JSESSIONID")
                         .permitAll()
                 );
 

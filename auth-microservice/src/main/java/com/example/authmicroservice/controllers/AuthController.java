@@ -3,9 +3,13 @@ package com.example.authmicroservice.controllers;
 import com.example.authmicroservice.dto.LoginRequest;
 import com.example.authmicroservice.dto.UserDto;
 import com.example.authmicroservice.models.User;
+import com.example.authmicroservice.services.JwtService;
 import com.example.authmicroservice.services.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,9 +19,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/")
 public class AuthController {
     private final UserService userService;
+    private final JwtService jwtService;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, JwtService jwtService) {
         this.userService = userService;
+        this.jwtService = jwtService;
     }
 
     @GetMapping("/register")
@@ -58,15 +64,22 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@ModelAttribute LoginRequest request) {
-        String token = userService.authenticate(request.getUsername(), request.getPassword());
-        if (token != null) {
-            User user = userService.findByUsername(request.getUsername());
+    public String login(@ModelAttribute LoginRequest request, HttpServletResponse response) {
+        User user = userService.findByUsername(request.getUsername());
+        if (user != null) {
+            String token = jwtService.generateToken(user);
+
+            Cookie jwtCookie = new Cookie("token", token);
+            jwtCookie.setHttpOnly(false);
+            jwtCookie.setPath("/");
+            jwtCookie.setMaxAge(3600);
+            response.addCookie(jwtCookie);
+
             return "redirect:http://localhost:8080/document-microservice/documents?userId="
                     + user.getId()
                     + "&name=" + user.getUsername();
         } else {
-            return "redirect:/login?error=true";
+            return "redirect:/";
         }
     }
 }
