@@ -1,7 +1,4 @@
 package com.example.documentmicroservice.controllers;
-import com.example.documentmicroservice.models.Document;
-import com.example.documentmicroservice.models.File;
-import com.example.documentmicroservice.models.Version;
 import com.example.documentmicroservice.services.DocumentService;
 import com.example.documentmicroservice.services.FileService;
 import com.example.documentmicroservice.services.VersionService;

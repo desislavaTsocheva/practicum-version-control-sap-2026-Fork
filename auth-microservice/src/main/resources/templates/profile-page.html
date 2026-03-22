@@ -16,6 +16,7 @@
             <div th:switch="${user.role}" class="role-badge">
                 <span th:case="'admin'" class="badge admin">ADMIN</span>
                 <span th:case="'editor'" class="badge editor">EDITOR</span>
+                <span th:case="'author'" class="badge author">AUTHOR</span>
                 <span th:case="*" class="badge reader">USER</span>
             </div>
         </div>
@@ -24,7 +25,13 @@
             <img th:src="@{'http://localhost:8080/auth-microservice/users/profile-pic/' + ${user.id}}"
                  alt="Profile Picture"
                  class="main-profile-pic"
+                 id="profile-img-preview"
                  onerror="this.src='https://via.placeholder.com/120'">
+
+            <div id="pfp-edit-container" style="display: none; margin-top: 10px;">
+                <label for="pfp-input" class="btn btn-secondary" style="font-size: 0.8rem; padding: 5px 10px;">CHANGE PHOTO</label>
+                <input type="file" id="pfp-input" accept="image/*" style="display: none;" onchange="previewImage(this)">
+            </div>
         </div>
         <div class="profile-details">
             <div class="edit-group">
@@ -62,6 +69,23 @@
     </div>
 </div>
 <script>
+    function getCookie(name) {
+        let value = "; " + document.cookie;
+        let parts = value.split("; " + name + "=");
+        if (parts.length === 2) return parts.pop().split(";").shift();
+        return null;
+    }
+
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('profile-img-preview').src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
     function toggleEditMode() {
         document.getElementById('name-display').style.display = 'none';
         document.getElementById('email-display').style.display = 'none';
@@ -69,37 +93,48 @@
         let inputs = document.querySelectorAll('.input-with-icon');
         inputs.forEach(div => div.style.display = 'flex');
 
+        document.getElementById('pfp-edit-container').style.display = 'block';
+
         document.getElementById('edit-btn').style.display = 'none';
         document.getElementById('save-btn').style.display = 'block';
     }
 
     function saveChanges() {
         const userId = "[[${user.id}]]";
-        const token = localStorage.getItem('token');
+        const token = getCookie('token');
 
-        const updatedData = {
-            firstName: document.getElementById('firstName-input').value,
-            lastName: document.getElementById('lastName-input').value,
-            email: document.getElementById('email-input').value
-        };
+        if (!token) {
+            alert("Session expired. Please login again.");
+            window.location.href = "/login";
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('firstName', document.getElementById('firstName-input').value);
+        formData.append('lastName', document.getElementById('lastName-input').value);
+        formData.append('email', document.getElementById('email-input').value);
+
+        const fileInput = document.getElementById('pfp-input');
+        if (fileInput.files[0]) {
+            formData.append('profilePicture', fileInput.files[0]);
+        }
 
         fetch(`/auth-microservice/users/profile/update/${userId}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + token
             },
-            body: JSON.stringify(updatedData)
+            body: formData
         })
             .then(response => {
                 if (response.status === 403 || response.status === 401) {
-                    alert("Session has expired");
+                    alert("Session has expired or you don't have permission.");
                     window.location.href = "/login";
                 } else if (response.ok) {
-                    alert("You saved the changes!");
+                    alert("Changes saved successfully!");
                     location.reload();
                 } else {
-                    alert("Error occurred!");
+                    alert("Error occurred while saving!");
                 }
             })
             .catch(err => console.error('Fetch Error:', err));

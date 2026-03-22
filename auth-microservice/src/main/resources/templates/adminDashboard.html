@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/auth-microservice/css/stylesheet.css}">
+    <link rel="stylesheet" th:href="@{/auth-microservice/css/admin.css}">
+    <link rel="icon" type="image/png" th:href="@{images/logo.png}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body style="height: auto; overflow-y: auto;">
+<div class="dashboard-container">
+
+    <div class="nav-header">
+        <div>
+            <h1 style="font-size: 2.5rem; letter-spacing: -1px;">Admin <span class="highlight">Dashboard</span></h1>
+            <p class="sub-text">Manage users and monitor system activity</p>
+        </div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <a th:href="@{/auth-microservice/users/profile/view/{id}(id=${admin.id})}" class="btn btn-primary btn-sm">MY
+                PROFILE</a>
+            <a th:href="@{/auth-microservice/}" class="logout-link" style="margin-top: 0;">LOGOUT</a>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h4>Total Users</h4>
+            <p th:text="${totalUsers}">0</p>
+        </div>
+        <div class="stat-card">
+            <h4>Active Projects</h4>
+            <p th:text="${projects}">45</p>
+        </div>
+        <div class="stat-card">
+            <h4>Storage Used</h4>
+            <p>28.7%</p></div>
+    </div>
+
+    <div class="admin-table-container fade-in">
+        <h3 style="margin-bottom: 20px;">System Users</h3>
+        <table>
+            <thead>
+            <tr>
+                <th class="col-user">User</th>
+                <th class="col-email">Email</th>
+                <th class="col-role">Role</th>
+                <th class="col-status">Status</th>
+                <th class="col-actions">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="user : ${users}" class="user-row">
+                <td class="col-user">
+                    <div class="user-info-cell">
+                        <img th:src="@{'http://localhost:8080/auth-microservice/users/profile-pic/' + ${user.id}}" class="table-pfp" onerror="this.src='https://via.placeholder.com/40'">
+                        <span th:text="${user.username}" style="font-weight: 600;">username</span>
+                    </div>
+                </td>
+                <td class="col-email" th:text="${user.email}">user@example.com</td>
+                <td class="col-role">
+                    <div th:switch="${user.role}" class="role-badge">
+                        <span th:case="'admin'" class="badge admin">ADMIN</span>
+                        <span th:case="'editor'" class="badge editor">EDITOR</span>
+                        <span th:case="'author'" class="badge author">AUTHOR</span>
+                        <span th:case="*" class="badge reader">USER</span>
+                    </div>
+                </td>
+                <td class="col-status">
+                    <div style="color: #2D5A27; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;">
+                        <span style="font-size: 1.5rem; line-height: 0; margin-bottom: 4px;">•</span>
+                        <span>Active</span>
+                    </div>
+                </td>
+                <td class="col-actions">
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-primary btn-sm" th:data-id="${user.id}" onclick="editUser(this.getAttribute('data-id'))">EDIT</button>
+                        <button class="btn btn-secondary btn-sm" th:data-id="${user.id}" onclick="deleteUser(this.getAttribute('data-id'))">DELETE</button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function deleteUser(userId) {
+        if (confirm("Are you sure you want to delete this user?")) {
+            const token = localStorage.getItem('token');
+            fetch(`/auth-microservice/admin/users/delete/${userId}`, {
+                method: 'DELETE',
+                headers: {'Authorization': 'Bearer ' + token}
+            }).then(res => {
+                if (res.ok) location.reload();
+                else alert("Action failed!");
+            });
+        }
+    }
+
+    function editUser(userId) {
+        window.location.href = `/auth-microservice/admin/users/edit/${userId}`;
+    }
+</script>
+
+</body>
+</html>
