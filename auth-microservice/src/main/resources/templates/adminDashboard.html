@@ -5,6 +5,7 @@
     <title>Admin Dashboard</title>
     <link rel="stylesheet" th:href="@{/auth-microservice/css/stylesheet.css}">
     <link rel="stylesheet" th:href="@{/auth-microservice/css/admin.css}">
+    <script src="../static/js/auth.js" th:src="@{/auth-microservice/js/auth.js}"></script>
     <link rel="icon" type="image/png" th:href="@{images/logo.png}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -17,8 +18,7 @@
             <p class="sub-text">Manage users and monitor system activity</p>
         </div>
         <div style="display: flex; gap: 15px; align-items: center;">
-            <a th:href="@{/auth-microservice/users/profile/view/{id}(id=${admin.id})}" class="btn btn-primary btn-sm">MY
-                PROFILE</a>
+            <a href="javascript:history.back()" class="btn btn-primary btn-sm">MY PROFILE</a>
             <a th:href="@{/auth-microservice/}" class="logout-link" style="margin-top: 0;">LOGOUT</a>
         </div>
     </div>
@@ -30,11 +30,12 @@
         </div>
         <div class="stat-card">
             <h4>Active Projects</h4>
-            <p th:text="${projects}">45</p>
+            <p th:text="${projects}">0</p>
         </div>
         <div class="stat-card">
-            <h4>Storage Used</h4>
-            <p>28.7%</p></div>
+            <h4>Active Documents</h4>
+            <p th:text="${documents}">0</p>
+        </div>
     </div>
 
     <div class="admin-table-container fade-in">
@@ -83,25 +84,6 @@
         </table>
     </div>
 </div>
-
-<script>
-    function deleteUser(userId) {
-        if (confirm("Are you sure you want to delete this user?")) {
-            const token = localStorage.getItem('token');
-            fetch(`/auth-microservice/admin/users/delete/${userId}`, {
-                method: 'DELETE',
-                headers: {'Authorization': 'Bearer ' + token}
-            }).then(res => {
-                if (res.ok) location.reload();
-                else alert("Action failed!");
-            });
-        }
-    }
-
-    function editUser(userId) {
-        window.location.href = `/auth-microservice/admin/users/edit/${userId}`;
-    }
-</script>
 
 </body>
 </html>

@@ -22,4 +22,8 @@ public class ProjectService {
         projectRepository.save(project);
     }
 
+    public long countAllProjects() {
+        return projectRepository.count();
+    }
+
 }
