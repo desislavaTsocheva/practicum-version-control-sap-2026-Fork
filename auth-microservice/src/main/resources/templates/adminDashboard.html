@@ -23,67 +23,118 @@
         </div>
     </div>
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <h4>Total Users</h4>
-            <p th:text="${totalUsers}">0</p>
-        </div>
-        <div class="stat-card">
-            <h4>Active Projects</h4>
-            <p th:text="${projects}">0</p>
-        </div>
-        <div class="stat-card">
-            <h4>Active Documents</h4>
-            <p th:text="${documents}">0</p>
+    <div class="dashboard-tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'users-tab')">System Users</button>
+        <button class="tab-btn" onclick="openTab(event, 'projects-tab')">Active Projects</button>
+        <button class="tab-btn" onclick="openTab(event, 'documents-tab')">Active Documents</button>
+    </div>
+
+<!--    <div class="stats-grid">-->
+<!--        <div class="stat-card">-->
+<!--            <h4>Total Users</h4>-->
+<!--            <p th:text="${totalUsers}">0</p>-->
+<!--        </div>-->
+<!--        <div class="stat-card">-->
+<!--            <h4>Active Projects</h4>-->
+<!--            <p th:text="${projects}">0</p>-->
+<!--        </div>-->
+<!--        <div class="stat-card">-->
+<!--            <h4>Active Documents</h4>-->
+<!--            <p th:text="${documents}">0</p>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <div id="users-tab" class="tab-content active-content">
+        <div class="admin-table-container fade-in">
+            <h3 style="margin-bottom: 20px;">System Users</h3>
+            <table>
+                <thead>
+                            <tr>
+                                <th class="col-user">User</th>
+                                <th class="col-email">Email</th>
+                                <th class="col-role">Role</th>
+                                <th class="col-status">Status</th>
+                                <th class="col-actions">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="user : ${users}" class="user-row">
+                                <td class="col-user">
+                                    <div class="user-info-cell">
+                                        <img th:src="@{'http://localhost:8080/auth-microservice/users/profile-pic/' + ${user.id}}" class="table-pfp" onerror="this.src='https://via.placeholder.com/40'">
+                                        <span th:text="${user.username}" style="font-weight: 600;">username</span>
+                                    </div>
+                                </td>
+                                <td class="col-email" th:text="${user.email}">user@example.com</td>
+                                <td class="col-role">
+                                    <div th:switch="${user.role}" class="role-badge">
+                                        <span th:case="'admin'" class="badge admin">ADMIN</span>
+                                        <span th:case="'editor'" class="badge editor">EDITOR</span>
+                                        <span th:case="'author'" class="badge author">AUTHOR</span>
+                                        <span th:case="*" class="badge reader">USER</span>
+                                    </div>
+                                </td>
+                                <td class="col-status">
+                                    <div style="color: #2D5A27; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;">
+                                        <span style="font-size: 1.5rem; line-height: 0; margin-bottom: 4px;">•</span>
+                                        <span>Active</span>
+                                    </div>
+                                </td>
+                                <td class="col-actions">
+                                    <div style="display: flex; gap: 8px;">
+                                        <button class="btn btn-primary btn-sm" th:data-id="${user.id}" onclick="editUser(this.getAttribute('data-id'))">EDIT</button>
+                                        <button class="btn btn-secondary btn-sm" th:data-id="${user.id}" onclick="deleteUser(this.getAttribute('data-id'))">DELETE</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+            </table>
         </div>
     </div>
 
-    <div class="admin-table-container fade-in">
-        <h3 style="margin-bottom: 20px;">System Users</h3>
-        <table>
-            <thead>
-            <tr>
-                <th class="col-user">User</th>
-                <th class="col-email">Email</th>
-                <th class="col-role">Role</th>
-                <th class="col-status">Status</th>
-                <th class="col-actions">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="user : ${users}" class="user-row">
-                <td class="col-user">
-                    <div class="user-info-cell">
-                        <img th:src="@{'http://localhost:8080/auth-microservice/users/profile-pic/' + ${user.id}}" class="table-pfp" onerror="this.src='https://via.placeholder.com/40'">
-                        <span th:text="${user.username}" style="font-weight: 600;">username</span>
-                    </div>
-                </td>
-                <td class="col-email" th:text="${user.email}">user@example.com</td>
-                <td class="col-role">
-                    <div th:switch="${user.role}" class="role-badge">
-                        <span th:case="'admin'" class="badge admin">ADMIN</span>
-                        <span th:case="'editor'" class="badge editor">EDITOR</span>
-                        <span th:case="'author'" class="badge author">AUTHOR</span>
-                        <span th:case="*" class="badge reader">USER</span>
-                    </div>
-                </td>
-                <td class="col-status">
-                    <div style="color: #2D5A27; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;">
-                        <span style="font-size: 1.5rem; line-height: 0; margin-bottom: 4px;">•</span>
-                        <span>Active</span>
-                    </div>
-                </td>
-                <td class="col-actions">
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-primary btn-sm" th:data-id="${user.id}" onclick="editUser(this.getAttribute('data-id'))">EDIT</button>
-                        <button class="btn btn-secondary btn-sm" th:data-id="${user.id}" onclick="deleteUser(this.getAttribute('data-id'))">DELETE</button>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+    <div id="projects-tab" class="tab-content" style="display: none;">
+        <div class="admin-table-container fade-in">
+            <h3 style="margin-bottom: 20px;">System Projects</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Project Name</th>
+                    <th>Owner</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="project : ${projectsList}">
+                    <td th:text="${project['name']}">Project Name</td>
+                    <td th:text="${project['owner']}">Owner</td>
+                    <td><span class="badge editor">Active</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
+
+    <div id="documents-tab" class="tab-content" style="display: none;">
+        <div class="admin-table-container fade-in">
+            <h3 style="margin-bottom: 20px;">System Documents</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>Document Name</th>
+                    <th>Owner</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="doc : ${documentsList}">
+                    <td th:text="${doc['title'] != null ? doc['title'] : doc['name']}">File Name</td>
+                    <td><span class="badge admin">Available</span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
 
 </body>
 </html>

@@ -18,6 +18,10 @@ public class ProjectService {
         return projectRepository.findByOwnerId(userId);
     }
 
+    public List<Project> getProjects() {
+        return projectRepository.findAll();
+    }
+
     public void saveProject(Project project) {
         projectRepository.save(project);
     }

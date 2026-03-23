@@ -2,6 +2,8 @@ package com.example.authmicroservice.controllers;
 
 import com.example.authmicroservice.models.User;
 import com.example.authmicroservice.services.UserService;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -30,54 +32,63 @@ public class AdminController {
 
     @GetMapping("/dashboard")
     public String showDashboard(Model model, Principal principal) {
-        if (principal == null) {
-            System.out.println("No principal found! Redirecting to login...");
-            return "redirect:/";
-        }
+        if (principal == null) return "redirect:/";
 
         try {
-            String username = principal.getName();
-            User currentAdmin = userService.findByUsername(username);
-
-            if (currentAdmin == null || !"admin".equals(currentAdmin.getRole())) {
-                return "redirect:/";
-            }
+            User currentAdmin = userService.findByUsername(principal.getName());
+            if (currentAdmin == null || !"admin".equals(currentAdmin.getRole())) return "redirect:/";
 
             List<User> allUsers = userService.getUsers();
-            int projectCount = 0;
-            int documentCount = 0;
-            try {
-                String response = restTemplate.getForObject("http://localhost:8080/project-microservice/projects/count", String.class);
-                String responseDoc = restTemplate.getForObject("http://localhost:8080/document-microservice/documents/count", String.class);
-                System.out.println("DEBUG: Response from Project & Document Service is: " + response + " " + responseDoc);
-
-                if (response != null) {
-                    projectCount = Integer.parseInt(response.trim());
-                }
-                if (responseDoc != null) {
-                    documentCount = Integer.parseInt(responseDoc.trim());
-                }
-            } catch (Exception e) {
-                System.out.println("Could not connect to Project Service: " + e.getMessage());
-                System.out.println("Could not connect to Document Service: " + e.getMessage());
-            }
-
             model.addAttribute("users", allUsers);
             model.addAttribute("totalUsers", allUsers.size());
-            model.addAttribute("projects", projectCount);
-            model.addAttribute("documents", documentCount);
-            model.addAttribute("admin", currentAdmin.getId());
+
+            List<?> allProjects = List.of();
+            List<?> allDocuments = List.of();
+            int projectCount = 0;
+            int documentCount = 0;
+
+            try {
+                // Използваме Map<String, Object>, за да не зависим от конкретни Entity класове
+                allProjects = restTemplate.exchange(
+                        "http://localhost:8080/project-microservice/projects/all",
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<List<java.util.Map<String, Object>>>() {}
+                ).getBody();
+
+                allDocuments = restTemplate.exchange(
+                        "http://localhost:8080/document-microservice/documents/all",
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<List<java.util.Map<String, Object>>>() {}
+                ).getBody();
+
+                model.addAttribute("projectsList", allProjects);
+                model.addAttribute("documentsList", allDocuments);
+                model.addAttribute("projects", allProjects != null ? allProjects.size() : 0);
+                model.addAttribute("documents", allDocuments != null ? allDocuments.size() : 0);
+
+            } catch (Exception e) {
+                System.err.println("CRITICAL ERROR: Could not fetch microservice data: " + e.getMessage());
+                model.addAttribute("projectsList", List.of());
+                model.addAttribute("documentsList", List.of());
+                model.addAttribute("projects", 0);
+                model.addAttribute("documents", 0);
+            }
+
+            model.addAttribute("projectsList", allProjects);
+            model.addAttribute("documentsList", allDocuments);
+//            model.addAttribute("projects", projectCount);
+//            model.addAttribute("documents", documentCount);
+            model.addAttribute("admin", currentAdmin);
 
             return "adminDashboard";
-
         } catch (Exception e) {
-            e.printStackTrace();
             return "redirect:/";
         }
-
     }
 
-    @DeleteMapping("/admin/users/delete/{id}")
+    @DeleteMapping("/users/delete/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
         try {
             boolean deleted = userService.deleteUser(id);
