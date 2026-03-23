@@ -72,6 +72,12 @@ public class DocumentController {
         return "documents";
     }
 
+    @GetMapping("/documents/all")
+    @ResponseBody
+    public List<Document> getAllDocuments() {
+        return documentService.findAll();
+    }
+
     @GetMapping("/documents/count")
     @ResponseBody
     public long countDocuments() {

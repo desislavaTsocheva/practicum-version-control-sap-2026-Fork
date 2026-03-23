@@ -56,6 +56,12 @@ public class ProjectController {
     public long countProjects() {
         return projectService.countAllProjects();
     }
+
+    @GetMapping("/projects/all")
+    @ResponseBody
+    public List<Project> getAllProjects() {
+        return projectService.getProjects();
+    }
 }
 
 

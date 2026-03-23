@@ -17,7 +17,7 @@
 	<module>auth-microservice</module>
 	<module>project-microservice</module>
 	<module>document-microservice</module>
-	<module>eureka_service</module>
+	<module>eureka-service</module>
 </modules>
 
 	<properties>

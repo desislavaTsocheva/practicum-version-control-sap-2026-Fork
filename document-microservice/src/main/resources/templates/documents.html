@@ -2,7 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Manage Yourself | Workspace</title>
+    <title>Workspace</title>
+    <script src="../static/js/document.js" th:src="@{/document-microservice/js/document.js}"></script>
     <link rel="stylesheet" th:href="@{/document-microservice/css/stylesheet.css}" href="../static/css/stylesheet.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -128,7 +129,6 @@
                 </div>
             </li>
         </ul>
-
         <div class="section-title" style="margin-top: 20px;">Collaborators</div>
         <div class="collaborators" style="display: flex; gap: 10px;">
             <div style="background: #ccc; width: 40px; height: 40px; border-radius: 50%;"></div>
@@ -141,72 +141,9 @@
 
 </div>
 
-<script>
-    function toggleFolder(element) {
-        const folderHeader = element.parentElement;
-        const nestedDocs = folderHeader.nextElementSibling;
-        if (nestedDocs && nestedDocs.classList.contains('nested-docs')) {
-            const isVisible = nestedDocs.style.display === 'block';
-            nestedDocs.style.display = isVisible ? 'none' : 'block';
-        }
-    }
-    function handleFileClick(element) {
-        const id = element.getAttribute('data-id');
-        const name = element.getAttribute('data-name');
-        const description = element.getAttribute('data-description');
-        const date = element.getAttribute('data-date');
-        showDetails(name, description, date, id);
-    }
-
-    function showDetails(name, description, date, id) {
-        console.log("Switching to file ID:", id);
-
-        const title = document.getElementById('selected-file-title');
-        if (title) title.innerText = name;
-
-        const container = document.getElementById('active-version-container');
-        if (container) {
-            container.innerHTML = `
-            <div class="version-item" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #eee; border-radius: 8px;">
-                <div class="file-info" style="display: flex; align-items: center; gap: 12px;">
-                    <img src="/document-microservice/images/icon-doc.png" style="width: 30px;">
-                    <div>
-                        <strong style="display: block;">${name}</strong>
-                        <small style="color: #888;">${description}</small>
-                    </div>
-                </div>
-                <div style="text-align: right;">
-                    <div style="font-size: 12px; color: #aaa; margin-bottom: 8px;">${date}</div>
-
-                    <a href="/document-microservice/documents/download/${id}"
-                       class="upload-btn"
-                       style="text-decoration: none; padding: 5px 15px; background: #90B69F; color: white; border-radius: 4px; display: inline-block;">
-                       Download
-                    </a>
-                </div>
-            </div>
-        `;
-        }
-    }
-
-    function showProjectFields() {
-        const fields = document.getElementById('projectFields');
-        const mainBtn = document.getElementById('toggleProjectBtn');
-        if (fields.style.display === 'flex') {
-            fields.style.display = 'none';
-            mainBtn.innerHTML = '<span>NEW PROJECT</span>';
-
-            mainBtn.style.backgroundColor = '#90B69F';
-            mainBtn.style.color = '#000';
-            mainBtn.style.border = '1px solid #90B69F';
-        } else {
-            fields.style.display = 'flex';
-            mainBtn.innerHTML = '<span>Cancel</span>';
-            mainBtn.style.backgroundColor = '#f3caca';
-            mainBtn.style.color = '#b31c1c';
-            mainBtn.style.border = '1px solid #b31c1c';
-        }
-    }
+<script th:inline="javascript">
+    const iconDocPath = /*[[@{/document-microservice/images/icon-doc.png}]]*/ '/images/icon-doc.png';
+    const iconDownloadPath = /*[[@{/document-microservice/images/icon-download.png}]]*/ '/images/icon-download.png';
 </script>
 
 </body>
