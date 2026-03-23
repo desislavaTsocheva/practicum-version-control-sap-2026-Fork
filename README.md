@@ -1,11 +1,13 @@
 # 📘 Practicum Version Control — SAP 2026
 ---
-## Our Team 
-Marieata Stoycheva - github.com/mstoycheva
-Desislava Tsocheva - github.com/desislavaTsocheva
-Milena Boyadzhieva - github.com/MilenaB12
-Bozhidara Malkocheva - github.com/BMalkocheva
-Denitsa Ilieva - github.com/DenitsaIlieva3
+## 👥 Our Team
+
+- **Marieata Stoycheva** – github.com/mstoycheva  
+- **Desislava Tsocheva** – github.com/desislavaTsocheva  
+- **Milena Boyadzhieva** – github.com/MilenaB12  
+- **Bozhidara Malkocheva** – github.com/BMalkocheva  
+- **Denitsa Ilieva** – github.com/DenitsaIlieva3  
+
 ---
 
 ## 📌 Overview
