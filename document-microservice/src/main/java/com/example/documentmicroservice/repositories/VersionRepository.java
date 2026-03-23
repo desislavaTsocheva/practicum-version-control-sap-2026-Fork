@@ -1,9 +1,7 @@
 package com.example.documentmicroservice.repositories;
-
 import com.example.documentmicroservice.models.Version;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.UUID;
 
