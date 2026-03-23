@@ -47,13 +47,6 @@ During the development of this project, our team worked with several tools and t
 
 ---
 
-## 📁 Project Structure
-
-/project-files
-          
-
----
-
 ## 🛠️ Project Functionality
 
 Our team developed a project that demonstrates the practical use of Git and GitHub in a collaborative environment.  
