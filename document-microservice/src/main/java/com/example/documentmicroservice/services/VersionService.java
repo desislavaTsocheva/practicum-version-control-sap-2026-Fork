@@ -1,10 +1,11 @@
 package com.example.documentmicroservice.services;
-
+import com.example.documentmicroservice.models.Document;
 import com.example.documentmicroservice.models.Version;
 import com.example.documentmicroservice.repositories.VersionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class VersionService {
@@ -20,7 +21,14 @@ public class VersionService {
     }
 
     @Transactional
-    public Version saveVersion(Version version) {
+    public Version saveVersion(UUID userId, Document document) {
+        Version version = new Version();
+        version.setVersionNumber(1);
+        version.setMessage("Initial upload");
+        version.setDocumentId(document.getId());
+        version.setUserId(userId);
+        version.setActive(true);
+        version.setApproved(false);
         return versionRepository.save(version);
     }
 }

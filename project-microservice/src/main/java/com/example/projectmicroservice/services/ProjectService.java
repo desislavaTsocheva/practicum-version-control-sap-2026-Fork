@@ -26,4 +26,8 @@ public class ProjectService {
         return projectRepository.count();
     }
 
+    public void saveDocumentInProject(UUID projectId, UUID documentId) {
+        Project project = (Project) projectRepository.findByDocId(documentId);
+    }
+
 }

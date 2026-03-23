@@ -1,18 +1,19 @@
 package com.example.documentmicroservice.controllers;
+import com.example.documentmicroservice.models.File;
+import com.example.documentmicroservice.models.Version;
 import com.example.documentmicroservice.services.DocumentService;
 import com.example.documentmicroservice.services.FileService;
 import com.example.documentmicroservice.services.VersionService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.example.documentmicroservice.models.Document;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -32,11 +33,7 @@ public class DocumentController {
     }
 
     @GetMapping("/documents")
-    public String showWorkspace(
-            @RequestParam(value = "userId", required = false) UUID userId,
-            @RequestParam(value = "name", required = false, defaultValue = "User") String name,
-            @RequestParam(value = "pfp", required = false) String profilePicture,
-            Model model) {
+    public String showWorkspace(@RequestParam(value = "userId", required = false) UUID userId, @RequestParam(value = "name", required = false, defaultValue = "User") String name, @RequestParam(value = "pfp", required = false) String profilePicture, Model model) {
 
         if (userId == null) {
             return "redirect:/error";
@@ -44,8 +41,7 @@ public class DocumentController {
 
         Map<String, Object> workspaceData = documentService.getWorkspaceData(userId);
 
-        @SuppressWarnings("unchecked")
-        Map<String, Object> groupedDocs = (Map<String, Object>) workspaceData.getOrDefault("groupedDocs", new java.util.HashMap<>());
+        @SuppressWarnings("unchecked") Map<String, Object> groupedDocs = (Map<String, Object>) workspaceData.getOrDefault("groupedDocs", new java.util.HashMap<>());
         List<Map<String, Object>> allProjects = null;
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -83,33 +79,11 @@ public class DocumentController {
     }
 
     @PostMapping("/documents")
-    public String uploadDocument(
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("userId") UUID userId,
-            @RequestParam("projectId") UUID projectId,
-            @RequestParam(value = "projectName", required = false, defaultValue = "General") String projectName,
-            @RequestParam(value = "name", required = false, defaultValue = "User") String name) {
-
-        documentService.saveDocument(file,projectId,userId);
-
-//        Version version = new Version();
-//        version.setVersionNumber(1);
-//        version.setMessage("Initial upload");
-//        version.setDocumentId(.getId());
-//        version.setUserId(userId);
-//        version.setActive(true);
-//        version.setApproved(false);
-//        version = versionService.saveVersion(version);
-//
-//        File fileEntity = new File();
-//        fileEntity.setFile_path(safeGetBytes(file));
-//        fileEntity.setContent(file.getContentType());
-//        fileEntity.setVersionId(version.getId());
-//        fileEntity.setHistoryTimestamp(LocalDateTime.now());
-//        fileService.saveFile(fileEntity);
-
-        return "redirect:http://localhost:8080/document-microservice/documents?userId="
-                + userId + "&name=" + name +"&projectId=" + projectId;
+    public String uploadDocument(@RequestParam("file") MultipartFile file, @RequestParam("userId") UUID userId, @RequestParam("projectId") UUID projectId, @RequestParam(value = "projectName", required = false) String projectName, @RequestParam(value = "name", required = false, defaultValue = "User") String name, Model model) {
+        Document document = (Document) documentService.saveDocument(file, projectId, projectName, userId);
+        Version version = versionService.saveVersion(userId, document);
+        File fileSave = fileService.saveFile(version.getId(), file);
+        return "redirect:http://localhost:8080/document-microservice/documents?userId=" + userId + "&name=" + name;
     }
 
     private byte[] safeGetBytes(MultipartFile file) {
@@ -118,5 +92,18 @@ public class DocumentController {
         } catch (IOException e) {
             throw new RuntimeException("Failed to read file bytes", e);
         }
+    }
+
+    @GetMapping("/documents/download/{id}")
+    public ResponseEntity<byte[]> downloadDocument(@PathVariable UUID id) {
+        File fileEntity = fileService.getFileEntityByDocumentId(id);
+        Document doc = documentService.findById(id);
+        byte[] data = fileEntity.getFile_path();
+        String contentType = fileEntity.getContent();
+
+        if (contentType == null) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + doc.getName() + "\"").contentType(MediaType.parseMediaType(contentType)).body(data);
     }
 }
