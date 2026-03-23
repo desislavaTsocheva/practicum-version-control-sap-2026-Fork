@@ -1,21 +1,17 @@
 package com.example.documentmicroservice.services;
-
 import com.example.documentmicroservice.models.Document;
 import com.example.documentmicroservice.repositories.DocumentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class DocumentService {
     private final DocumentRepository documentRepository;
+
     public DocumentService(DocumentRepository documentRepository) {
         this.documentRepository = documentRepository;
     }
@@ -48,15 +44,24 @@ public class DocumentService {
         return data;
     }
 
+    public Document findById(UUID documentId) {
+        return documentRepository.findById(documentId)
+                .orElseThrow(() -> new RuntimeException("Document not found with id: " + documentId));
+    }
+
     @Transactional
-    public void saveDocument(MultipartFile file, UUID projectId, UUID userId) {
+    public Document saveDocument(MultipartFile file, UUID projectId, String projectName, UUID userId) {
         Document doc = new Document();
         doc.setName(file.getOriginalFilename());
         doc.setProjectId(projectId);
+        doc.setDescription(projectName);
         doc.setCreatedBy(userId);
         doc.setCreatedAt(LocalDateTime.now());
-        doc.setDescription("Active");
-        documentRepository.save(doc);
+        return documentRepository.save(doc);
+    }
+
+    public Optional<Document> getId(UUID docId) {
+        return documentRepository.findById(docId);
     }
 
     public long countAllDocuments() {

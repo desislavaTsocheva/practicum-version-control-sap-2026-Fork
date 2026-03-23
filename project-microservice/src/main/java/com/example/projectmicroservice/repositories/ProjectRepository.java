@@ -3,6 +3,7 @@ import com.example.projectmicroservice.models.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.Document;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,4 +11,8 @@ import java.util.UUID;
 public interface ProjectRepository extends JpaRepository<Project, UUID> {
     List<Project> findByOwnerId(UUID ownerId);
     long count();
+    default List<Document> findByDocId(UUID docId){
+        return findByDocId(docId);
+    }
 }
+
