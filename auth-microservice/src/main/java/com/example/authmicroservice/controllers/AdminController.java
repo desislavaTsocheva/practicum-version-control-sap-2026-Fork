@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Controller
@@ -48,7 +49,6 @@ public class AdminController {
             int documentCount = 0;
 
             try {
-                // Използваме Map<String, Object>, за да не зависим от конкретни Entity класове
                 allProjects = restTemplate.exchange(
                         "http://localhost:8080/project-microservice/projects/all",
                         HttpMethod.GET,
@@ -63,10 +63,24 @@ public class AdminController {
                         new ParameterizedTypeReference<List<java.util.Map<String, Object>>>() {}
                 ).getBody();
 
+                projectCount = Objects.requireNonNull(restTemplate.exchange(
+                        "http://localhost:8080/project-microservice/projects/count",
+                        HttpMethod.GET,
+                        null,
+                        Long.class
+                ).getBody()).intValue();
+
+                documentCount = Objects.requireNonNull(restTemplate.exchange(
+                        "http://localhost:8080/document-microservice/documents/count",
+                        HttpMethod.GET,
+                        null,
+                        Long.class
+                ).getBody()).intValue();
+
                 model.addAttribute("projectsList", allProjects);
                 model.addAttribute("documentsList", allDocuments);
-                model.addAttribute("projects", allProjects != null ? allProjects.size() : 0);
-                model.addAttribute("documents", allDocuments != null ? allDocuments.size() : 0);
+                model.addAttribute("projects", projectCount);
+                model.addAttribute("documents", documentCount);
 
             } catch (Exception e) {
                 System.err.println("CRITICAL ERROR: Could not fetch microservice data: " + e.getMessage());

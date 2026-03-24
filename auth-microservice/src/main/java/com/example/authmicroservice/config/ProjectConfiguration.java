@@ -35,7 +35,7 @@ public class ProjectConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/css/**", "/js/**", "/images/**", "/auth-microservice/images/**", "/static/**").permitAll()
                         .requestMatchers("/login", "/register", "/auth-microservice/login").permitAll()
-                        .requestMatchers("/auth-microservice/admin/users/delete/**").permitAll()
+                        .requestMatchers("/auth-microservice/admin/users/delete/**").hasRole("admin")
                         .requestMatchers("/auth-microservice/admin/**").hasRole("admin")
                         .requestMatchers("/users/profile-pic/**").permitAll()
                         .requestMatchers("/users/profile/**").authenticated()
