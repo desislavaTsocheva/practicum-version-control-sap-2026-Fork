@@ -18,7 +18,10 @@
             <p class="sub-text">Manage users and monitor system activity</p>
         </div>
         <div style="display: flex; gap: 15px; align-items: center;">
-            <a href="javascript:history.back()" class="btn btn-primary btn-sm">MY PROFILE</a>
+            <a th:href="@{/auth-microservice/users/profile/{id}(id=${admin.id})}"
+               class="btn btn-primary btn-sm">
+                MY PROFILE
+            </a>
             <a th:href="@{/auth-microservice/}" class="logout-link" style="margin-top: 0;">LOGOUT</a>
         </div>
     </div>
@@ -42,7 +45,12 @@
     <div id="users-tab" class="tab-content active-content">
         <div class="admin-table-container fade-in">
             <h3 style="margin-bottom: 20px;">System Users</h3>
-            <table>
+            <div class="search-container" style="margin-bottom: 15px;">
+                <input type="text" id="userSearchInput" onkeyup="filterTable('userSearchInput', 'users-table')"
+                       placeholder="Search by username or email..."
+                       style="padding: 8px; width: 100%; border-radius: 5px; border: 1px solid #ddd;">
+            </div>
+            <table id="users-table">
                 <thead>
                 <tr>
                     <th class="col-user">User</th>
@@ -95,7 +103,12 @@
     <div id="projects-tab" class="tab-content" style="display: none;">
         <div class="admin-table-container fade-in">
             <h3 style="margin-bottom: 20px;">System Projects</h3>
-            <table>
+            <div class="search-container" style="margin-bottom: 15px;">
+                <input type="text" id="projectSearchInput" onkeyup="filterTable('projectSearchInput', 'projects-table')"
+                       placeholder="Search by project title..."
+                       style="padding: 8px; width: 100%; border-radius: 5px; border: 1px solid #ddd;">
+            </div>
+            <table id="projects-table">
                 <thead>
                 <tr>
                     <th>Project Name</th>
@@ -117,25 +130,54 @@
     <div id="documents-tab" class="tab-content" style="display: none;">
         <div class="admin-table-container fade-in">
             <h3 style="margin-bottom: 20px;">System Documents</h3>
-            <table>
+            <div class="search-container" style="margin-bottom: 15px;">
+                <input type="text" id="documentSearchInput"
+                       onkeyup="filterTable('documentSearchInput', 'documents-table')"
+                       placeholder="Search by document title..."
+                       style="padding: 8px; width: 100%; border-radius: 5px; border: 1px solid #ddd;">
+            </div>
+            <table id="documents-table">
                 <thead>
                 <tr>
                     <th>Document Name</th>
-                    <th>Owner</th>
                     <th>Status</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="doc : ${documentsList}">
                     <td th:text="${doc['name']}">Document Title</td>
-                    <td th:text="${doc['userId']}">Username</td>
                     <td><span class="badge admin">Available</span></td>
                 </tr>
                 </tbody>
             </table>
         </div>
     </div>
+</div>
 
+<div id="editUserModal" class="modal"
+     style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color: rgba(0,0,0,0.5);">
+    <div style="background-color: #fff; margin: 15% auto; padding: 20px; border-radius: 8px; width: 300px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+        <h3 style="margin-top: 0;">Change user's role</h3>
+        <p id="modalUsername" style="font-weight: 600; color: #666;"></p>
 
-    <body>
+        <form id="editRoleForm">
+            <input type="hidden" id="editUserId">
+            <label for="newRole">Choose a role:</label>
+            <select id="newRole"
+                    style="width: 100%; padding: 8px; margin: 15px 0; border-radius: 4px; border: 1px solid #ddd;">
+                <option value="admin">ADMIN</option>
+                <option value="editor">EDITOR</option>
+                <option value="author">AUTHOR</option>
+                <option value="reader">USER (Reader)</option>
+            </select>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal()">CANCEL</button>
+                <button type="submit" class="btn btn-primary btn-sm">SAVE</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+</body>
 </html>
