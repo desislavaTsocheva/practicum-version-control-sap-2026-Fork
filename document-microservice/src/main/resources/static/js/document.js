@@ -12,6 +12,9 @@ function handleFileClick(element) {
     const description = element.getAttribute('data-description');
     const date = element.getAttribute('data-date');
     showDetails(name, description, date, id);
+    if (userRole === 'editor' || userRole === 'admin') {
+        document.getElementById('editor-actions').style.display = 'block';
+    }
 }
 
 function showDetails(name, description, date, id) {
@@ -60,4 +63,8 @@ function showProjectFields() {
         mainBtn.style.color = '#b31c1c';
         mainBtn.style.border = '1px solid #b31c1c';
     }
+}
+
+function updateDocStatus(newStatus) {
+    alert("Document " + newStatus);
 }

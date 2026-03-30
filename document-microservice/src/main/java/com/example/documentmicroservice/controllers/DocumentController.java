@@ -63,6 +63,19 @@ public class DocumentController {
             System.err.println("Could not fetch projects: " + e.getMessage());
         }
 
+        String role = "user";
+        try {
+            RestTemplate restTemplate = new RestTemplate();
+            String authUrl = "http://localhost:8080/auth-microservice/users/" + userId;
+            Map<String, Object> userResponse = restTemplate.getForObject(authUrl, Map.class);
+
+            if (userResponse != null && userResponse.get("role") != null) {
+                role = (String) userResponse.get("role");
+            }
+        } catch (Exception e) {
+            System.err.println("Could not fetch user role: " + e.getMessage());
+        }
+        model.addAttribute("userRole", role.toLowerCase());
         model.addAttribute("userId", userId);
         model.addAttribute("username", name);
         model.addAttribute("groupedDocs", groupedDocs);

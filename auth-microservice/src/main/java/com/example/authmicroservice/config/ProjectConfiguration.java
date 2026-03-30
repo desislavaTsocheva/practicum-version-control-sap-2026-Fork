@@ -38,7 +38,7 @@ public class ProjectConfiguration {
                         .requestMatchers("/auth-microservice/admin/users/delete/**").hasRole("admin")
                         .requestMatchers("/auth-microservice/admin/**").hasRole("admin")
                         .requestMatchers("/users/profile-pic/**").permitAll()
-                        .requestMatchers("/users//update-role/**").hasRole("admin")
+                        .requestMatchers("/users/update-role/**").hasRole("admin")
                         .requestMatchers("/users/profile/**").authenticated()
                         .anyRequest().authenticated()
                 )

@@ -10,7 +10,6 @@
 <body>
 
 <div class="workspace-container">
-
     <div class="column-card">
         <div class="card-header-profile">
             <a th:href="@{'/auth-microservice/users/profile/' + ${userId}}" class="profile-link" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 15px;">
@@ -23,7 +22,9 @@
             </a>
         </div>
         <div class="file-tree">
-            <button type="button" class="upload-btn" id="toggleProjectBtn" onclick="showProjectFields()">NEW PROJECT</button>
+            <button th:if="${userRole == 'author' || userRole == 'admin'}"
+                    type="button" class="upload-btn" id="toggleProjectBtn"
+                    onclick="showProjectFields()">NEW PROJECT</button>
 
             <div id="projectFields" style="display: none; flex-direction: column;">
                 <form action="http://localhost:8080/project-microservice/projects" method="post" id="addProject" style="display: flex; flex-direction: column; gap: 12px;">
@@ -48,7 +49,9 @@
                         </span>
                     </div>
 
-                    <form action="http://localhost:8080/document-microservice/documents" method="post" enctype="multipart/form-data" style="margin: 0;">
+                    <form th:if="${userRole == 'author' || userRole == 'admin'}"
+                            action="http://localhost:8080/document-microservice/documents" method="post"
+                          enctype="multipart/form-data" style="margin: 0;">
                         <input type="hidden" name="userId" th:value="${userId}">
                         <input type="hidden" name="name" th:value="${username}">
                         <input type="hidden" name="projectName" th:value="${entry.key}">
@@ -68,6 +71,7 @@
                 <ul class="nested-docs" style="display: none; list-style: none; padding-left: 20px;">
                     <li th:each="doc : ${entry.value}">
                         <div class="tree-item file-clickable"
+                             th:if="${userRole != 'reader'}"
                              style="cursor: pointer;"
                              th:data-id="${doc.id}"
                              th:data-name="${doc.name}"
