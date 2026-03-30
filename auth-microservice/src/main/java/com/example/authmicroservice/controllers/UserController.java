@@ -81,4 +81,16 @@ public class UserController {
         userService.save(user);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/users/update-role/{id}")
+    public ResponseEntity<?> updateRole(@PathVariable UUID id, @RequestParam String role) {
+        try {
+            User user = userService.findById(id);
+            user.setRole(role.toLowerCase());
+            userService.save(user);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
 }
