@@ -21,6 +21,10 @@ public class FileService {
     }
     public List<File> getAllFiles() {return fileRepository.findAll();}
 
+//    public List<File> getAllFilesByUserId(UUID id) {
+//        return ;
+//    }
+
     @Transactional
     public File saveFile(UUID versionId, MultipartFile multipartFile) {
         File file = new File();
