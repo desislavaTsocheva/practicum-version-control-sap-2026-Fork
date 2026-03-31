@@ -39,6 +39,22 @@ public class ProjectController {
         return "redirect:http://localhost:8080/document-microservice/documents?userId=" + ownerId;
     }
 
+    @PostMapping("/projects/add")
+    public String addNewProject(
+            @RequestParam("projectName") String name,
+            @RequestParam("userId") UUID userId) {
+
+        Project project = new Project();
+        project.setName(name);
+        project.setOwnerId(userId);
+        project.setCreatedAt(LocalDateTime.now());
+        project.setDescription("Active");
+
+        projectService.saveProject(project);
+
+        return "redirect:http://localhost:8080/document-microservice/documents?userId=" + userId;
+    }
+
     @GetMapping("/projects/user/{userId}")
     @ResponseBody
     public List<Project> getProjectsByUser(@PathVariable UUID userId) {
