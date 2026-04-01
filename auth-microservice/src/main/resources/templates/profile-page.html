@@ -53,7 +53,10 @@
         </div>
         <div class="profile-actions">
             <div class="button-group">
-                <a href="javascript:history.back()" class="btn btn-secondary">BACK</a>
+                <a th:href="@{/document-microservice/documents(userId=${user.id}, name=${user.username})}"
+                   class="btn btn-secondary">
+                    BACK
+                </a>
                 <button class="btn btn-primary" id="edit-btn" onclick="toggleEditMode()">EDIT</button>
                 <button class="btn btn-success" id="save-btn" style="display: none;" onclick="saveChanges()">SAVE</button>
             </div>
