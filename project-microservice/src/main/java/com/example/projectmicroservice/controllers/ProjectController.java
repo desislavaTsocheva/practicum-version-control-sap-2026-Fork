@@ -78,6 +78,11 @@ public class ProjectController {
     public List<Project> getAllProjects() {
         return projectService.getProjects();
     }
+
+    @GetMapping("/projects/public/{userId}")
+    public List<Project> getPublicProjects(@PathVariable UUID userId) {
+        return projectService.getProjectsForUser(userId);
+    }
 }
 
 

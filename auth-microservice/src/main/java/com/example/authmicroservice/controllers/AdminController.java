@@ -45,8 +45,8 @@ public class AdminController {
 
             List<?> allProjects = List.of();
             List<?> allDocuments = List.of();
-            int projectCount = 0;
-            int documentCount = 0;
+            int projectCount;
+            int documentCount;
 
             try {
                 allProjects = restTemplate.exchange(
