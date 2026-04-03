@@ -30,4 +30,7 @@ public class Project {
 
     @Column(name = "owner_id", nullable = false)
     private UUID ownerId;
+
+    @Column(name = "privacy", nullable = false)
+    private boolean isPublic = false;
 }

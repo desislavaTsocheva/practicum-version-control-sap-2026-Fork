@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -42,21 +43,33 @@ public class DocumentController {
         @SuppressWarnings("unchecked")
         Map<String, Object> groupedDocs = (Map<String, Object>) workspaceData.getOrDefault("groupedDocs", new java.util.HashMap<>());
 
-        List<Map<String, Object>> allProjects = null;
+        List<Map<String, Object>> allProjects;
         try {
             RestTemplate restTemplate = new RestTemplate();
             String url = "http://localhost:8080/project-microservice/projects/user/" + userId;
+//            String url = "http://localhost:8080/project-microservice/projects/public/" + userId;
             allProjects = restTemplate.getForObject(url, List.class);
             model.addAttribute("allProjects", allProjects);
+            if (allProjects != null) {
+                model.addAttribute("allProjects", allProjects);
+
+                for (Map<String, Object> proj : allProjects) {
+                    String projectName = (String) proj.get("name");
+                    if (!groupedDocs.containsKey(projectName)) {
+                        groupedDocs.put(projectName, new ArrayList<>());
+                    }
+                }
+            } else {
+                model.addAttribute("allProjects", new ArrayList<>());
+            }
         } catch (Exception e) {
             System.err.println("Project fetch failed: " + e.getMessage());
         }
 
-        String role = "user";
+        String role = "reader";
         try {
             RestTemplate restTemplate = new RestTemplate();
             String authUrl = "http://localhost:8080/auth-microservice/users/" + userId;
-            System.out.println("Calling URL: " + authUrl);
 
             ResponseEntity<Map> response = restTemplate.getForEntity(authUrl, Map.class);
 
@@ -94,9 +107,22 @@ public class DocumentController {
                 .body(data);
     }
 
+    @GetMapping("/documents/count")
+    @ResponseBody
+    public long countDocuments() {
+        return documentService.countAllDocuments();
+    }
+
+    @GetMapping("/documents/all")
+    @ResponseBody
+    public List<Document> getAllDocuments() {
+        return documentService.findAll();
+    }
+
     @GetMapping("/projects/user/{userId}")
     @ResponseBody
     public List<Files> getFilesByUser(@PathVariable UUID userId) {
-        return fileService.getAllFiles(userId);
+        //return fileService.getAllFiles(userId);
+        return new ArrayList<>(0);
     }
 }

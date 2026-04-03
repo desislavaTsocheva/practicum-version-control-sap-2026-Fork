@@ -234,6 +234,16 @@ h3 {
     margin: 0;
 }
 
+.folder-toggle:hover .profile-name {
+    color: #4A90E2;
+}
+
+.file-count {
+    font-size: 0.8rem;
+    color: #999;
+    font-weight: 300;
+}
+
 .doc-icon {
     transition: all 0.2s ease;
     background: transparent;

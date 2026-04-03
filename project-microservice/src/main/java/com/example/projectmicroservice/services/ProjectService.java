@@ -34,4 +34,8 @@ public class ProjectService {
         Project project = (Project) projectRepository.findByDocId(documentId);
     }
 
+    public List<Project> getProjectsForUser(UUID userId) {
+        return projectRepository.findAllForUser(userId);
+    }
+
 }

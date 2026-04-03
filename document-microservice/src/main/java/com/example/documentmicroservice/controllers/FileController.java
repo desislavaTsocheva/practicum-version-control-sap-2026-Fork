@@ -32,11 +32,19 @@ public class FileController {
             @RequestParam(value = "projectName", required = false) String projectName,
             @RequestParam(value = "name", required = false, defaultValue = "User") String name) {
 
-        Document document = documentService.saveDocument(file, projectId, projectName, userId);
+        if (file == null || file.isEmpty()) {
+            System.out.println("empty file");
+        }
 
-        Version version = versionService.saveVersion(userId, document);
+        try {
+            Document document = documentService.saveDocument(file, projectId, projectName, userId);
+            Version version = versionService.saveVersion(userId, document);
+            fileService.saveFile(version.getId(), file);
 
-        fileService.saveFile(version.getId(), file);
+        } catch (Exception e) {
+            System.err.println("error: " + e.getMessage());
+        }
+
         return "redirect:http://localhost:8080/document-microservice/documents?userId=" + userId + "&name=" + name;
     }
 }
