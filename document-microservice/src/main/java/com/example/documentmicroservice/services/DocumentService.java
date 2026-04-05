@@ -49,6 +49,10 @@ public class DocumentService {
                 .orElseThrow(() -> new RuntimeException("Document not found with id: " + documentId));
     }
 
+    public List<Document> findAllByCreatedBy(UUID userId) {
+        return documentRepository.findByCreatedBy(userId);
+    }
+
     @Transactional
     public Document saveDocument(MultipartFile file, UUID projectId, String projectName, UUID userId) {
         Document doc = new Document();
