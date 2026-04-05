@@ -22,8 +22,7 @@ public class ProjectController {
     public String newProject(
             @RequestParam("name") String projectName,
             @RequestParam("description") String description,
-            @RequestParam("ownerId") UUID ownerId
-    ) {
+            @RequestParam("ownerId") UUID ownerId) {
         Project project = new Project();
         project.setName(projectName);
         project.setDescription(description);

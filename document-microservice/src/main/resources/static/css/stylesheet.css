@@ -234,9 +234,9 @@ h3 {
     margin: 0;
 }
 
-.folder-toggle:hover .profile-name {
-    color: #4A90E2;
-}
+/*.folder-toggle:hover .profile-name {*/
+/*    color: #4A90E2;*/
+/*}*/
 
 .file-count {
     font-size: 0.8rem;
