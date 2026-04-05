@@ -17,10 +17,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class DocumentController {
@@ -48,7 +46,18 @@ public class DocumentController {
 
         List<Map<String, Object>> allProjects;
         List<Document> allDocuments = documentService.findAllByCreatedBy(userId);
-        List<Version> allVersions = versionService.findAllByCreatedBy(userId);
+        List<Version> rawVersions = versionService.findAllByCreatedBy(userId);
+
+        List<Map<String, Object>> draftDocs = rawVersions.stream().map(v -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", v.getId());
+            map.put("message", v.getMessage());
+            map.put("versionNumber", v.getVersionNumber());
+            if (v.getDocumentId() != null) {
+                map.put("documentId", v.getDocumentId());
+            }
+            return map;
+        }).toList();
         //model.addAttribute("allDocuments", allDocuments);
         try {
             RestTemplate restTemplate = new RestTemplate();
@@ -93,7 +102,7 @@ public class DocumentController {
         model.addAttribute("username", name);
         model.addAttribute("groupedDocs", groupedDocs);
         model.addAttribute("activeDocs", workspaceData.get("activeDocs"));
-        model.addAttribute("draftDocs", allVersions);
+        model.addAttribute("draftDocs", draftDocs);
         model.addAttribute("allDocuments", allDocuments);
         return "documents";
     }

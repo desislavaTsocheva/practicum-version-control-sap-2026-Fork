@@ -11,10 +11,9 @@ function handleFileClick(element) {
     const name = element.getAttribute('data-name');
     const description = element.getAttribute('data-description');
     const date = element.getAttribute('data-date');
+
     showDetails(name, description, date, id);
-    if (userRole === 'editor' || userRole === 'admin') {
-        document.getElementById('editor-actions').style.display = 'block';
-    }
+    filterAndShowDrafts(id);
 }
 
 function showDetails(name, description, date, id) {
@@ -24,6 +23,7 @@ function showDetails(name, description, date, id) {
     if (title) title.innerText = name;
 
     const container = document.getElementById('active-version-container');
+
     if (container) {
         container.innerHTML = `
         <div class="version-item" style="display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid #eee; border-radius: 8px;">
@@ -43,6 +43,36 @@ function showDetails(name, description, date, id) {
             </div>
         </div>
     `;
+    }
+}
+
+function filterAndShowDrafts(selectedDocId) {
+    const container = document.getElementById('version-container');
+    const listElement = container.querySelector('.version-list');
+
+    const filteredDrafts = allDrafts.filter(draft => {
+        const draftId = draft.documentId || draft.docId;
+        return String(draftId) === String(selectedDocId);
+    });
+
+    console.log("Filtered result:", filteredDrafts);
+
+    if (filteredDrafts.length > 0) {
+        container.style.display = 'block';
+        listElement.innerHTML = filteredDrafts.map(draft => `
+            <li class="version-item" style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">
+                <div class="file-info" style="display: flex; align-items: center; gap: 10px;">
+                    <img src="${iconDocPath}" class="file-icon" alt="doc" style="width: 25px;">
+                    <div>
+                        <span style="font-weight: 600; display: block;">${draft.message || 'No message'}</span>
+                        <small style="color: #666;">Version ID: ${draft.id.substring(0,8)}...</small>
+                    </div>
+                </div>
+            </li>
+        `).join('');
+    } else {
+        container.style.display = 'block';
+        listElement.innerHTML = '<p style="font-size: 0.85rem; color: #888; padding-left: 10px;">No drafts for this document.</p>';
     }
 }
 
