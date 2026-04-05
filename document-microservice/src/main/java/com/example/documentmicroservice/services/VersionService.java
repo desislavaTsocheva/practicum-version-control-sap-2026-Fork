@@ -24,11 +24,15 @@ public class VersionService {
     public Version saveVersion(UUID userId, Document document) {
         Version version = new Version();
         version.setVersionNumber(1);
-        version.setMessage("Initial upload");
+        version.setMessage(document.getName());
         version.setDocumentId(document.getId());
         version.setUserId(userId);
         version.setActive(true);
         version.setApproved(false);
         return versionRepository.save(version);
+    }
+
+    public List<Version> findAllByCreatedBy(UUID userId) {
+        return versionRepository.findByUserId(userId);
     }
 }

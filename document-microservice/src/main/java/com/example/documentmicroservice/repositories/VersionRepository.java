@@ -1,4 +1,5 @@
 package com.example.documentmicroservice.repositories;
+import com.example.documentmicroservice.models.Document;
 import com.example.documentmicroservice.models.Version;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -8,4 +9,6 @@ import java.util.UUID;
 @Repository
 public interface VersionRepository extends CrudRepository<Version, Integer> {
     List<Version> findByDocumentId(UUID documentId);
+    List<Version> findByUserId(UUID userId);
+
 }

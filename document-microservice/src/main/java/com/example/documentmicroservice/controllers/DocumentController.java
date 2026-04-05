@@ -2,6 +2,7 @@ package com.example.documentmicroservice.controllers;
 
 import com.example.documentmicroservice.models.Document;
 import com.example.documentmicroservice.models.File;
+import com.example.documentmicroservice.models.Version;
 import com.example.documentmicroservice.services.DocumentService;
 import com.example.documentmicroservice.services.FileService;
 import com.example.documentmicroservice.services.VersionService;
@@ -25,10 +26,12 @@ import java.util.UUID;
 public class DocumentController {
     private final DocumentService documentService;
     private final FileService fileService;
+    private final VersionService versionService;
 
     public DocumentController(DocumentService documentService, FileService fileService, VersionService versionService) {
         this.documentService = documentService;
         this.fileService = fileService;
+        this.versionService = versionService;
     }
 
     @GetMapping("/documents")
@@ -44,6 +47,9 @@ public class DocumentController {
         Map<String, Object> groupedDocs = (Map<String, Object>) workspaceData.getOrDefault("groupedDocs", new java.util.HashMap<>());
 
         List<Map<String, Object>> allProjects;
+        List<Document> allDocuments = documentService.findAllByCreatedBy(userId);
+        List<Version> allVersions = versionService.findAllByCreatedBy(userId);
+        //model.addAttribute("allDocuments", allDocuments);
         try {
             RestTemplate restTemplate = new RestTemplate();
             String url = "http://localhost:8080/project-microservice/projects/user/" + userId;
@@ -87,8 +93,8 @@ public class DocumentController {
         model.addAttribute("username", name);
         model.addAttribute("groupedDocs", groupedDocs);
         model.addAttribute("activeDocs", workspaceData.get("activeDocs"));
-        model.addAttribute("draftDocs", workspaceData.get("draftDocs"));
-
+        model.addAttribute("draftDocs", allVersions);
+        model.addAttribute("allDocuments", allDocuments);
         return "documents";
     }
 
@@ -105,6 +111,12 @@ public class DocumentController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + doc.getName() + "\"")
                 .contentType(MediaType.parseMediaType(contentType))
                 .body(data);
+    }
+
+    @GetMapping("/documents/user/{userId}")
+    public ResponseEntity<List<Document>> getDocumentsByUserId(@PathVariable UUID userId) {
+        List<Document> userDocs = documentService.findAllByCreatedBy(userId);
+        return ResponseEntity.ok(userDocs);
     }
 
     @GetMapping("/documents/count")

@@ -58,22 +58,35 @@
                                 <div class="tree-item folder-toggle" onclick="toggleFolder(this)" style="margin: 0; flex-grow: 1; cursor: pointer;">
                                     <img th:src="@{/document-microservice/images/icon-folder.png}" alt="folder">
                                     <span class="profile-name">
-                            <span th:text="${entry.key}">Project Name</span>
+                                    <span th:text="${entry.key}">Project Name</span>
 
-                            <span th:if="${p['isPublic'] == true || p['public'] == true}" title="Public Project">🌍</span>
-                            <span th:unless="${p['isPublic'] == true || p['public'] == true}" title="Private Project" style="opacity: 0.5;">🔒</span>
+                                    <span th:if="${p['isPublic'] == true || p['public'] == true}" title="Public Project">Public</span>
+                                    <span th:unless="${p['isPublic'] == true || p['public'] == true}" title="Private Project" style="opacity: 0.5;">Private</span>
 
-                            <span class="file-count" th:text="${entry.value != null ? '(' + entry.value.size() + ')' : '(0)'}">(0)</span>
-                        </span>
+                                    <span class="file-count" th:text="${entry.value != null ? '(' + entry.value.size() + ')' : '(0)'}">(0)</span>
+                                     </span>
                                 </div>
 
                                 <form th:if="${userRole == 'author' || userRole == 'admin'}"
-                                      th:action="@{/document-microservice/upload}" method="post" enctype="multipart/form-data" style="margin: 0;">
+                                      th:action="@{/document-microservice/upload}"
+                                      method="post"
+                                      enctype="multipart/form-data"
+                                      th:id="'uploadForm-' + ${p['id']}">
+
+                                    <input type="hidden" name="userId" th:value="${userId}">
                                     <input type="hidden" name="projectId" th:value="${p['id']}">
-                                    <input type="file" name="file" style="display: none;" onchange="this.form.submit();">
-                                    <button type="button" class="doc-icon" onclick="this.previousElementSibling.click()" style="background: transparent; border: none; cursor: pointer; padding: 5px;">
-                                        <img th:src="@{/document-microservice/images/icon-upload.png}" alt="upload" style="width: 18px; height: 18px;">
-                                    </button>
+                                    <input type="hidden" name="projectName" th:value="${p['name']}">
+
+                                    <input type="file"
+                                           name="file"
+                                           th:id="'fileInput-' + ${p['id']}"
+                                           style="display: none;"
+                                           onchange="this.form.submit();"> <button type="button"
+                                                                                   th:data-target="'fileInput-' + ${p['id']}"
+                                                                                   onclick="document.getElementById(this.getAttribute('data-target')).click();"
+                                                                                   style="background: transparent; border: none; cursor: pointer;">
+                                    <img th:src="@{/document-microservice/images/icon-upload.png}" alt="upload" style="width: 18px; height: 18px;">
+                                </button>
                                 </form>
                             </div>
 
@@ -121,16 +134,16 @@
         </div>
 
         <div th:if="${userRole == 'author' || userRole == 'admin'}" style="padding: 0 15px;">
-            <form th:action="@{/document-microservice/upload}" method="post" enctype="multipart/form-data" id="mainUploadForm" style="display: flex; flex-direction: column; gap: 12px;">
+            <form th:action="@{/document-microservice/uploadVersion}" method="post" enctype="multipart/form-data" id="mainUploadForm" style="display: flex; flex-direction: column; gap: 12px;">
                 <input type="hidden" name="userId" th:value="${userId}">
                 <input type="hidden" name="name" th:value="${username}">
 
-                <label style="font-size: 0.8rem; color: #666; margin-bottom: -8px;">Target Project:</label>
-                <select name="projectId" class="project-input" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
-                    <option value="" disabled selected>-- Select Project --</option>
-                    <option th:each="proj : ${allProjects}"
-                            th:value="${proj.id}"
-                            th:text="${proj.name}">
+                <label style="font-size: 0.8rem; color: #666; margin-bottom: -8px;">Target Document:</label>
+                <select name="docId" class="doc-input" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                    <option value="" disabled selected>-- Select Document --</option>
+                    <option th:each="doc : ${allDocuments}"
+                            th:value="${doc.id}"
+                            th:text="${doc.name}">
                     </option>
                 </select>
 
@@ -148,7 +161,7 @@
             <li th:each="draft : ${draftDocs}" class="version-item">
                 <div class="file-info">
                     <img th:src="@{/document-microservice/images/icon-doc.png}" class="file-icon" alt="doc" style="width: 30px;">
-                    <span th:text="${draft.name}">Draft Name</span>
+                    <span th:text="${draft.message}">Draft Name</span>
                 </div>
             </li>
         </ul>

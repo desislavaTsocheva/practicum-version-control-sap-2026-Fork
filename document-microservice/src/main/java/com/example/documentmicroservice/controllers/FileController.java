@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -30,13 +32,45 @@ public class FileController {
             @RequestParam("userId") UUID userId,
             @RequestParam("projectId") UUID projectId,
             @RequestParam(value = "projectName", required = false) String projectName,
-            @RequestParam(value = "name", required = false, defaultValue = "User") String name) {
+            @RequestParam(value = "name", required = false) String name) {
 
-        Document document = documentService.saveDocument(file, projectId, projectName, userId);
+        if (file == null || file.isEmpty()) {
+            System.out.println("empty file");
+        }
 
-        Version version = versionService.saveVersion(userId, document);
+        try {
+            Document document = documentService.saveDocument(file, projectId, projectName, userId);
+            Version version = versionService.saveVersion(userId, document);
+            fileService.saveFile(version.getId(), file);
 
-        fileService.saveFile(version.getId(), file);
+        } catch (Exception e) {
+            System.err.println("error: " + e.getMessage());
+        }
+
+        return "redirect:http://localhost:8080/document-microservice/documents?userId=" + userId + "&name=" + name;
+    }
+
+    @PostMapping("/uploadVersion")
+    public String uploadVersions(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("userId") UUID userId,
+            @RequestParam("docId") UUID documentId,
+            @RequestParam(value = "name", required = false) String name) {
+
+        if (file == null || file.isEmpty()) {
+            System.out.println("empty file");
+        }
+
+        try {
+            Document doc = documentService.findById(documentId);
+            Version version = versionService.saveVersion(userId, doc);
+            fileService.saveFile(version.getId(), file);
+
+        } catch (Exception e) {
+            System.err.println("error: " + e.getMessage());
+            return "redirect:/error";
+        }
+
         return "redirect:http://localhost:8080/document-microservice/documents?userId=" + userId + "&name=" + name;
     }
 }
