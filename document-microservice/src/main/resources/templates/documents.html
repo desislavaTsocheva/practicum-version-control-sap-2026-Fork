@@ -76,6 +76,9 @@
                                         <img th:src="@{/document-microservice/images/icon-upload.png}" alt="upload" style="width: 18px; height: 18px;">
                                     </button>
                                 </form>
+                                <div th:if="${errorMessage}" style="color: white; background: #e84c4c; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                                    <span th:text="${errorMessage}"></span>
+                                </div>
                             </div>
 
                             <ul class="nested-docs" style="display: none; list-style: none; padding-left: 25px;">
@@ -179,6 +182,16 @@
     const userRole = /*[[${userRole}]]*/ 'reader';
 
     console.log("Loaded drafts:", allDrafts);
+</script>
+
+<script th:if="${param.errorType != null and param.errorType[0] == 'largeFile'}">
+    Swal.fire({
+        icon: 'error',
+        title: 'Upload Error',
+        text: 'The file exceeds the 10MB limit. Please try a smaller file.',
+        confirmButtonColor: '#95b3a0',
+        confirmButtonText: 'Try Again'
+    });
 </script>
 
 </body>

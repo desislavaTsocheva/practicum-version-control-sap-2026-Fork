@@ -17,15 +17,6 @@ function toggleFolder(element) {
         console.error("Error");
     }
 }
-// function handleFileClick(element) {
-//     const id = element.getAttribute('data-id');
-//     const name = element.getAttribute('data-name');
-//     const description = element.getAttribute('data-description');
-//     const date = element.getAttribute('data-date');
-//
-//     showDetails(name, description, date, id);
-//     filterAndShowDrafts(id, name, description, date);
-// }
 
 function handleFileClick(element) {
     const id = element.getAttribute('data-id');
@@ -39,8 +30,8 @@ function handleFileClick(element) {
 
 function showDetails(name, description, date, id) {
     console.log("Switching to file ID:", id);
-    // const title = document.getElementById('selected-file-title');
-    // if (title) title.innerText = name;
+    const title = document.getElementById('selected-file-title');
+    if (title) title.innerText = name;
 }
 
 function handleVersion(versionId, action) {
@@ -50,7 +41,7 @@ function handleVersion(versionId, action) {
 
     console.log(`Sending ${method} request to: ${url}`);
 
-    fetch(url, { method: method })
+    fetch(url, {method: method})
         .then(response => {
             if (response.ok) {
                 const versionIndex = allDrafts.findIndex(v => String(v.id) === String(versionId));
@@ -142,23 +133,36 @@ function filterAndShowDrafts(selectedDocId, name, description, date) {
     container.style.display = 'block';
     if (draftsOnly.length > 0) {
         listElement.innerHTML = draftsOnly.map(draft => `
-            <li class="version-item" style="display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; background: white; border-radius: 8px; margin-bottom: 6px; border: 1px solid #eee;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <img src="${iconDocPath}" alt="doc" style="width: 18px;">
-                    <span style="font-size: 10px; background: #f0f0f0; padding: 1px 5px; border-radius: 4px;">v.${draft.versionNumber || draft.version_number}</span>
-                    <span style="font-size: 11px;">${draft.message || 'Draft'}</span>
-                </div>
-                <div style="display: flex; gap: 5px;">
-                    <button onclick="handleVersion('${draft.id}', 'accept')" 
-                            style="padding: 2px 8px; border: none; background: #569e68; color: white; border-radius: 4px; cursor: pointer;">✔</button>
-                    <button onclick="handleVersion('${draft.id}', 'reject')" 
-                            style="padding: 2px 8px; border: none; background: #e84c4c; color: white; border-radius: 4px; cursor: pointer;">✖</button>
-                </div>
-            </li>`).join('');
+           <li class="version-item" style="display: flex; align-items: center; padding: 8px 10px; background: white; border-radius: 8px; margin-bottom: 6px; border: 1px solid #eee; gap: 12px;">
+    <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+        <img src="${iconDocPath}" alt="doc" style="width: 18px;">
+        <span style="font-size: 10px; background: #f0f0f0; padding: 1px 5px; border-radius: 4px;">
+            v.${draft.versionNumber || draft.version_number}
+        </span>
+        <span style="font-size: 11px;">${draft.message || 'Draft'}</span>
+    </div>
+
+    <div style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
+        <a href="/document-microservice/documents/download/${draft.id}">
+           <img src="${iconDownloadPath}" alt="download" style="width: 22px; height: 22px;">
+        </a>
+        
+        ${userRole === 'editor' ? `
+            <div style="display: flex; gap: 5px; border-left: 1px solid #eee; padding-left: 10px;">
+                <button onclick="handleVersion('${draft.id}', 'accept')" 
+                        style="padding: 2px 8px; border: none; background: #569e68; color: white; border-radius: 4px; cursor: pointer;">✔</button>
+                <button onclick="handleVersion('${draft.id}', 'reject')" 
+                        style="padding: 2px 8px; border: none; background: #e84c4c; color: white; border-radius: 4px; cursor: pointer;">✖</button>
+            </div>
+        ` : ''}
+    </div>
+</li>
+           `).join('');
     } else {
         listElement.innerHTML = '<p style="font-size: 0.85rem; color: #888; padding-left: 10px;">No pending drafts.</p>';
     }
 }
+
 function showProjectFields() {
     const fields = document.getElementById('projectFields');
     const mainBtn = document.getElementById('toggleProjectBtn');
